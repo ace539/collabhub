@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="db.js"></script>
+<script src="parse.js"></script>
+<style>
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;background:#0a0a0f;color:#e8e8f2;font-family:"Figtree",system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:#c084fc;text-underline-offset:3px}
+  a:hover{color:#e9d5ff}
+  :focus{outline:none}
+  :focus-visible{outline:2px solid #a855f7;outline-offset:2px}
+  ::selection{background:rgba(168,85,247,.35)}
+  input,textarea,select,button{font-family:inherit}
+  textarea{resize:vertical}
+  ::placeholder{color:#565669}
+  input[type=date],select{color-scheme:dark}
+  @keyframes popin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @keyframes aurora1{0%{transform:translate3d(-6%,-4%,0) scale(1)}50%{transform:translate3d(8%,6%,0) scale(1.18)}100%{transform:translate3d(-6%,-4%,0) scale(1)}}
+  @keyframes aurora2{0%{transform:translate3d(6%,4%,0) scale(1.1)}50%{transform:translate3d(-8%,-6%,0) scale(.92)}100%{transform:translate3d(6%,4%,0) scale(1.1)}}
+  @keyframes sheen{0%{background-position:-140% 0}60%,100%{background-position:240% 0}}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(168,85,247,0)}50%{box-shadow:0 0 22px 2px rgba(168,85,247,.22)}}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#0a0a0f;position:relative;isolation:isolate">
+
+  <div aria-hidden="true" style="position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden">
+    <div style="position:absolute;top:-24%;left:-16%;width:58vw;height:58vw;border-radius:999px;background:radial-gradient(circle at 50% 50%,rgba(139,92,246,.24),rgba(139,92,246,0) 68%);filter:blur(48px);animation:aurora1 28s ease-in-out infinite"></div>
+    <div style="position:absolute;top:8%;right:-20%;width:52vw;height:52vw;border-radius:999px;background:radial-gradient(circle at 50% 50%,rgba(217,70,239,.18),rgba(217,70,239,0) 68%);filter:blur(56px);animation:aurora2 36s ease-in-out infinite"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(168,85,247,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(168,85,247,.045) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 90% 55% at 50% 0%,#000,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 90% 55% at 50% 0%,#000,transparent 75%)"></div>
+  </div>
+
+  <sc-if value="{{ locked }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px">
+      <div style="width:100%;max-width:460px;background:rgba(15,15,22,.88);backdrop-filter:blur(12px);border:1px solid #1e1e29;border-radius:18px;padding:32px;box-shadow:0 30px 70px -40px rgba(0,0,0,1);animation:popin .4s cubic-bezier(.2,.7,.3,1) both">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:18px;display:inline-flex;align-items:baseline"><span style="color:#f4f4fa">sp</span><span style="color:#c084fc;font-size:1.12em">&#8743;</span><span style="color:#f4f4fa">ce</span></div>
+        <h1 style="font-size:28px;font-weight:800;line-height:1.1;letter-spacing:-.03em;margin:0 0 8px">Team desk</h1>
+        <p style="color:#8f8fa3;margin:0 0 20px;font-size:14px">Pick your account. Wallets and WL spots are private to each member — nobody on the team sees yours.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+          <sc-for list="{{ loginMembers }}" as="m" hint-placeholder-count="3">
+            <button onClick="{{ m.pick }}" style="cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px;border-radius:11px;border:1px solid {{ m.border }};background:{{ m.bg }};color:#e8e8f2">
+              <span style="width:34px;height:34px;flex:none;border-radius:999px;background:{{ m.avatarBg }};color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ m.initials }}</span>
+              <span style="flex:1">
+                <span style="display:block;font-size:15px;font-weight:700;letter-spacing:-.01em">{{ m.name }}</span>
+                <span style="display:block;font-size:12px;color:#8f8fa3">{{ m.handle }}</span>
+              </span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:{{ m.roleBg }};color:{{ m.roleFg }};border:1px solid {{ m.roleBd }}">{{ m.role }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input ref="{{ refPass }}" type="password" placeholder="Passcode" onKeyDown="{{ passKey }}" style="flex:1 1 180px;height:44px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:15px" style-focus="border-color:#a855f7">
+          <button onClick="{{ unlock }}" style="cursor:pointer;font-size:15px;font-weight:700;padding:12px 24px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Log in</button>
+        </div>
+        <p style="margin:12px 0 0;font-size:13px;color:#f87171;min-height:20px">{{ lockNote }}</p>
+        <a href="Whitelist Hub.dc.html" style="display:inline-block;margin-top:18px;font-size:14px;font-weight:600">← Back to the public site</a>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ unlocked }}" hint-placeholder-val="{{ true }}">
+    <div>
+      <header style="display:flex;align-items:center;gap:10px;padding:12px 28px;border-bottom:1px solid #1e1e29;position:sticky;top:0;background:rgba(10,10,15,.78);backdrop-filter:blur(16px) saturate(1.3);z-index:20;flex-wrap:wrap">
+        <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;margin-right:6px;display:inline-flex;align-items:baseline"><span style="color:#f4f4fa">sp</span><span style="color:#c084fc;font-size:1.12em">&#8743;</span><span style="color:#f4f4fa">ce</span></span>
+        <nav style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+            <button onClick="{{ t.pick }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+          </sc-for>
+        </nav>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+          <span title="{{ dbBlurb }}" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;border-radius:999px;background:{{ dbBg }};color:{{ dbFg }};border:1px solid {{ dbBd }};white-space:nowrap">
+            <span style="width:6px;height:6px;border-radius:999px;background:currentColor"></span>{{ dbStatus }}
+          </span>
+          <a href="Whitelist Hub.dc.html" style="text-decoration:none;font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;border:1px solid #262633;color:#a9a9bd" style-hover="border-color:#3a3a4d;color:#f4f4fa">↗ Public site</a>
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid #262633;background:#0f0f16">
+            <span style="width:26px;height:26px;border-radius:999px;background:{{ meAvatarBg }};color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ meInitials }}</span>
+            <span style="font-size:13px;font-weight:600">{{ meName }}</span>
+            <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8f8fa3">{{ meRole }}</span>
+          </span>
+          <button onClick="{{ lock }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 13px;border-radius:9px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#3a3a4d;color:#f4f4fa">Log out</button>
+        </div>
+      </header>
+
+      <sc-if value="{{ hasAlerts }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 28px;background:rgba(251,146,60,.1);border-bottom:1px solid rgba(251,146,60,.25);flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(251,146,60,.16);border:1px solid rgba(251,146,60,.35);color:#fdba74;flex:none">Deadline alert</span>
+          <span style="font-size:14px;color:#f4f4fa;flex:1 1 240px">{{ alertText }}</span>
+          <div style="display:flex;gap:8px;margin-left:auto">
+            <button onClick="{{ goPriority }}" style="cursor:pointer;font-size:13px;font-weight:700;padding:7px 14px;border-radius:8px;border:1px solid rgba(251,146,60,.35);background:transparent;color:#fdba74" style-hover="background:rgba(251,146,60,.14)">Show me</button>
+            <button onClick="{{ dismissAlerts }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:7px 12px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#3a3a4d;color:#f4f4fa">Dismiss</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- OVERVIEW -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <section style="padding:26px 28px 72px;max-width:1400px">
+          <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">{{ greeting }}</h2>
+          <p style="color:#8f8fa3;margin:0 0 22px;font-size:14px">{{ homeSub }}</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:24px">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="5">
+              <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:14px;padding:15px 17px;transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s">
+                <div style="font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.1;color:{{ s.color }}">{{ s.value }}</div>
+                <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-top:2px">{{ s.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px;align-items:start">
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0">Do these today</h3>
+                <span style="margin-left:auto;font-size:12px;color:#6f6f85">deadline ≤ 3 days</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ todo }}" as="t" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:12px;background:#15151d;border:1px solid #21212c;border-radius:10px;padding:11px 14px;flex-wrap:wrap">
+                    <span style="font-size:15px;font-weight:700;letter-spacing:-.015em;flex:1 1 120px">{{ t.project }}</span>
+                    <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.3);color:#fdba74">{{ t.due }}</span>
+                    <sc-if value="{{ t.dm }}" hint-placeholder-val="{{ true }}">
+                      <a href="{{ t.dm }}" target="_blank" rel="noopener" style="font-size:12px;font-weight:700;text-decoration:none;padding:6px 12px;border-radius:7px;border:1px solid #2d2d3d;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">DM ↗</a>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ noTodo }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:14px;color:#6f6f85;padding:18px 0">Nothing closing in the next 3 days. Good time to grind engagement.</div>
+              </sc-if>
+            </div>
+
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+                <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0">Trending on X</h3>
+                <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:{{ xStatusBg }};color:{{ xStatusFg }};border:1px solid {{ xStatusBd }}">{{ xStatus }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <sc-for list="{{ xTrends }}" as="x" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:12px;background:#15151d;border:1px solid #21212c;border-radius:10px;padding:10px 14px">
+                    <span style="font-size:13px;font-weight:800;color:#565669;width:20px">{{ x.rank }}</span>
+                    <span style="flex:1">
+                      <span style="display:block;font-size:14px;font-weight:700;letter-spacing:-.01em">{{ x.tag }}</span>
+                      <span style="display:block;font-size:12px;color:#6f6f85">{{ x.meta }}</span>
+                    </span>
+                    <span style="font-size:12px;font-weight:700;color:{{ x.deltaColor }}">{{ x.delta }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ noTrends }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:20px 0;font-size:13px;color:#6f6f85;line-height:1.6">No topics yet. Add what's trending from the Settings tab and it shows here and on the public page.</div>
+              </sc-if>
+              <p style="margin:14px 0 0;font-size:12px;color:#565669;line-height:1.5">Typed in by admins. Live X trends need an API key on a server — see Settings.</p>
+            </div>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- PRIORITY -->
+      <sc-if value="{{ isPriority }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Priority</h2>
+          <p style="color:#8f8fa3;margin:0 0 22px;max-width:60ch;font-size:14px">Auto-ranked: hype weighted against how soon the mint lands. Your own WL claims are flagged.</p>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ priority }}" as="p" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:18px;background:#0f0f16;border:1px solid #1e1e29;border-radius:12px;padding:15px 20px;flex-wrap:wrap">
+                <span style="font-size:19px;font-weight:800;color:#565669;min-width:28px">{{ p.rank }}</span>
+                <div style="min-width:170px;flex:1 1 170px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="font-size:17px;font-weight:700;letter-spacing:-.02em">{{ p.project }}</span>
+                    <sc-if value="{{ p.mine }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);color:#86efac">My WL</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:13px;color:#6f6f85">{{ p.sub }}</div>
+                </div>
+                <div style="flex:1 1 200px;min-width:160px">
+                  <div style="height:7px;border-radius:999px;background:#1e1e29;overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ p.barColor }};width:{{ p.barWidth }}"></div></div>
+                  <div style="font-size:12px;color:#6f6f85;margin-top:5px">Score {{ p.score }} · hype {{ p.hype }}/10</div>
+                </div>
+                <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:{{ p.urgencyBg }};color:{{ p.urgencyFg }};border:1px solid {{ p.urgencyBd }}">{{ p.urgency }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ noProjects }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:44px 26px;border-radius:14px;border:1px dashed #2d2d3d;color:#6f6f85;max-width:640px">
+              <h3 style="font-size:19px;font-weight:700;color:#e8e8f2;margin:0 0 6px">Nothing to rank yet</h3>
+              <p style="margin:0 0 16px;font-size:14px;line-height:1.6">Priority ranks whatever is on the team board by hype and how soon the mint lands. Add a project and it appears here.</p>
+              <button onClick="{{ goProjects }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Go to Projects</button>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- PROJECTS (shared) -->
+      <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1420px">
+          <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+            <div>
+              <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Projects</h2>
+              <p style="margin:0;color:#8f8fa3;font-size:14px">Shared team board — everyone sees these. Your spots and wallets stay private.</p>
+            </div>
+            <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap">
+              <button onClick="{{ togglePaste }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 18px;border-radius:9px;border:1px solid {{ pasteBorder }};background:{{ pasteBg }};color:{{ pasteFg }}">{{ pasteLabel }}</button>
+              <button onClick="{{ toggleAdd }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">{{ addLabel }}</button>
+            </div>
+          </div>
+
+          <sc-if value="{{ pasting }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#0f0f16;border:1px solid rgba(168,85,247,.3);border-radius:14px;padding:24px;margin-bottom:22px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <h3 style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0">Paste from X</h3>
+                <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(168,85,247,.14);border:1px solid rgba(168,85,247,.32);color:#d8b4fe">Auto-fill</span>
+              </div>
+              <p style="margin:0 0 14px;font-size:13px;color:#8f8fa3;line-height:1.6">Copy a whole post — collab announcement, mint listing, giveaway thread — and drop it here. It pulls out the project, chain, supply, price, dates, handles and the requirements. Check what it got before saving.</p>
+              <textarea value="{{ pasteText }}" onChange="{{ setPasteText }}" rows="6" placeholder="Paste the post here…&#10;&#10;e.g. Sandclock mints Sept 2 · 3333 supply · 0.019 ETH&#10;40 WL spots for our partners — follow @sandclock and @sandclock_cm, RT + comment, must hold a partner NFT" style="width:100%;padding:13px 15px;border-radius:10px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px;line-height:1.6;font-family:ui-monospace,SFMono-Regular,Menlo,monospace" style-focus="border-color:#a855f7"></textarea>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px">
+                <button onClick="{{ runParse }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Read it</button>
+                <button onClick="{{ clearPaste }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 16px;border-radius:9px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#3a3a4d;color:#f4f4fa">Clear</button>
+                <span style="font-size:13px;color:#8f8fa3">{{ parseNote }}</span>
+              </div>
+
+              <sc-if value="{{ parsed }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:18px;padding-top:18px;border-top:1px solid #1e1e29">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+                    <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6f6f85">What it found</span>
+                    <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:{{ parsed.confBg }};color:{{ parsed.confFg }};border:1px solid {{ parsed.confBd }}">{{ parsed.confLabel }}</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px">
+                    <sc-for list="{{ parsed.fields }}" as="f" hint-placeholder-count="8">
+                      <label style="display:block">
+                        <span style="display:block;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:5px">{{ f.label }}</span>
+                        <input value="{{ f.value }}" onChange="{{ f.set }}" placeholder="{{ f.placeholder }}" style="width:100%;height:40px;padding:0 12px;border-radius:8px;border:1px solid {{ f.border }};background:#15151d;color:{{ f.color }};font-size:14px" style-focus="border-color:#a855f7">
+                      </label>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{ parsed.hasReqs }}" hint-placeholder-val="{{ true }}">
+                    <div style="background:#15151d;border:1px solid #21212c;border-radius:10px;padding:14px;margin-bottom:14px">
+                      <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-bottom:9px">Requirements detected</div>
+                      <div style="display:flex;gap:7px;flex-wrap:wrap">
+                        <sc-for list="{{ parsed.reqs }}" as="r" hint-placeholder-count="3">
+                          <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:6px 12px;border-radius:8px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.28);color:#d8b4fe">{{ r.icon }} {{ r.label }}</span>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <div style="display:flex;gap:10px;flex-wrap:wrap">
+                    <button onClick="{{ saveParsed }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Add to board</button>
+                    <sc-if value="{{ parsed.hasReqs }}" hint-placeholder-val="{{ true }}">
+                      <button onClick="{{ saveParsedAsGiveaway }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:1px solid #262633;background:transparent;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">Add + start giveaway →</button>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ adding }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:18px;padding:26px;margin-bottom:22px">
+              <h3 style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 18px">New project</h3>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a855f7;margin-bottom:12px">Public info</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px">
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Name *</span><input ref="{{ nProject }}" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Chain</span><input ref="{{ nChain }}" placeholder="ETH / SOL / BTC" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Supply</span><input ref="{{ nSupply }}" placeholder="5000" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Mint date</span><input ref="{{ nMint }}" type="date" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Mint price</span><input ref="{{ nPrice }}" placeholder="0.02 ETH" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Hype (0–10)</span><input ref="{{ nHype }}" type="number" min="0" max="10" placeholder="5" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">X / Twitter</span><input ref="{{ nX }}" placeholder="x.com/…" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Telegram</span><input ref="{{ nTg }}" placeholder="t.me/…" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              </div>
+              <label style="display:block;margin-bottom:20px"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Bullish info / opinion</span><textarea ref="{{ nNotes }}" rows="2" style="width:100%;padding:12px 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></textarea></label>
+
+              <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a855f7;margin-bottom:12px">Collab info (team-visible)</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px">
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Collab manager</span><input ref="{{ nManager }}" placeholder="@handle" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">DM link / contact</span><input ref="{{ nDm }}" placeholder="t.me/…" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Spots offered</span><input ref="{{ nSpots }}" placeholder="25" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Submission deadline</span><input ref="{{ nDeadline }}" type="date" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              </div>
+              <label style="display:block;margin-bottom:16px"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Rules &amp; requirements</span><textarea ref="{{ nRules }}" rows="3" style="width:100%;padding:12px 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></textarea></label>
+              <label style="display:flex;align-items:center;gap:10px;margin-bottom:20px;cursor:pointer">
+                <input ref="{{ nGiveaway }}" type="checkbox" style="width:17px;height:17px;accent-color:#a855f7;cursor:pointer">
+                <span style="font-size:14px;color:#d5d5e2">Giveaway currently running</span>
+              </label>
+              <div style="display:flex;gap:10px">
+                <button onClick="{{ addProject }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 24px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Save</button>
+                <button onClick="{{ toggleAdd }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 20px;border-radius:9px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#3a3a4d;color:#f4f4fa">Cancel</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(390px,1fr));gap:16px;align-items:start">
+            <sc-for list="{{ projects }}" as="c" hint-placeholder-count="3">
+              <article style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:22px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+                  <sc-if value="{{ c.giveaway }}" hint-placeholder-val="{{ true }}">
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);color:#86efac"><span style="width:6px;height:6px;border-radius:999px;background:#4ade80;box-shadow:0 0 8px #4ade80"></span>Giveaway live</span>
+                  </sc-if>
+                  <span style="font-size:11px;font-weight:600;color:#565669">added by {{ c.addedBy }}</span>
+                  <sc-if value="{{ c.canDelete }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ c.remove }}" title="Delete" style="margin-left:auto;cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid #262633;background:transparent;color:#6f6f85;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center" style-hover="border-color:#f87171;color:#f87171">×</button>
+                  </sc-if>
+                </div>
+
+                <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+                  <h3 style="font-size:22px;font-weight:800;line-height:1.15;letter-spacing:-.025em;margin:0">{{ c.project }}</h3>
+                  <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c084fc">{{ c.chain }}</span>
+                  <span style="margin-left:auto;font-size:12px;font-weight:700;color:#8f8fa3">🔥 {{ c.hype }}/10</span>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-bottom:14px">
+                  <div><div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:2px">Spots</div><div style="font-size:15px;font-weight:600">{{ c.spots }}</div></div>
+                  <div><div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:2px">Supply</div><div style="font-size:15px;font-weight:600">{{ c.supply }}</div></div>
+                  <div><div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:2px">Price</div><div style="font-size:15px;font-weight:600">{{ c.price }}</div></div>
+                  <div><div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:2px">Deadline</div><div style="font-size:15px;font-weight:600;color:{{ c.deadlineColor }}">{{ c.deadlineLabel }}</div></div>
+                  <div><div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:2px">Mint</div><div style="font-size:15px;font-weight:600">{{ c.mintLabel }}</div></div>
+                  <div><div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-bottom:2px">Claimed by</div><div style="font-size:15px;font-weight:600">{{ c.claimCount }}</div></div>
+                </div>
+
+                <sc-if value="{{ c.rules }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:#15151d;border:1px solid #21212c;border-radius:10px;padding:12px 14px;margin-bottom:12px">
+                    <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-bottom:4px">Rules &amp; requirements</div>
+                    <div style="font-size:14px;line-height:1.5;color:#b8b8c9;white-space:pre-wrap">{{ c.rules }}</div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ c.notes }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:14px;color:#8f8fa3;margin-bottom:12px;white-space:pre-wrap">{{ c.notes }}</div>
+                </sc-if>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:13px;border-top:1px solid #1e1e29">
+                  <span style="font-size:13px;font-weight:600;padding:6px 12px;border-radius:8px;background:#15151d;border:1px solid #262633;color:#b8b8c9">CM {{ c.manager }}</span>
+                  <sc-if value="{{ c.dm }}" hint-placeholder-val="{{ true }}">
+                    <a href="{{ c.dm }}" target="_blank" rel="noopener" style="font-size:13px;font-weight:700;text-decoration:none;padding:7px 13px;border-radius:8px;border:1px solid #2d2d3d;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">DM ↗</a>
+                  </sc-if>
+                  <button onClick="{{ c.claim }}" style="margin-left:auto;cursor:pointer;font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;border:{{ c.claimBorder }};background:{{ c.claimBg }};color:{{ c.claimFg }}">{{ c.claimLabel }}</button>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+          <sc-if value="{{ noProjects }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:44px 26px;border-radius:14px;border:1px dashed #2d2d3d;color:#6f6f85;max-width:640px">
+              <h3 style="font-size:19px;font-weight:700;color:#e8e8f2;margin:0 0 6px">The board is empty</h3>
+              <p style="margin:0 0 16px;font-size:14px;line-height:1.6">{{ emptyProjectsHint }}</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button onClick="{{ toggleAdd }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">+ New project</button>
+                <sc-if value="{{ canSeed }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ goSettings }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border-radius:9px;border:1px solid #262633;background:transparent;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">Push starter data →</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- MY WL (private) -->
+      <sc-if value="{{ isMyWl }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:3px">
+            <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0">My WL spots</h2>
+            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:#d8b4fe">🔒 Private to {{ meName }}</span>
+            <button onClick="{{ exportCsv }}" style="margin-left:auto;cursor:pointer;font-size:13px;font-weight:700;padding:9px 16px;border-radius:9px;border:1px solid #262633;background:transparent;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">↓ Export CSV</button>
+          </div>
+          <p style="color:#8f8fa3;margin:0 0 22px;max-width:62ch;font-size:14px">Only you can see this tab's contents. Claim a project on the Projects board and it appears here.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start">
+            <sc-for list="{{ myWl }}" as="w" hint-placeholder-count="3">
+              <article style="background:#0f0f16;border:1px solid {{ w.cardBorder }};border-radius:16px;padding:20px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+                  <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ w.statusBg }};color:{{ w.statusFg }};border:1px solid {{ w.statusBd }}">{{ w.statusLabel }}</span>
+                  <button onClick="{{ w.remove }}" title="Remove" style="margin-left:auto;cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid #262633;background:transparent;color:#6f6f85;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center" style-hover="border-color:#f87171;color:#f87171">×</button>
+                </div>
+                <h3 style="font-size:20px;font-weight:800;letter-spacing:-.025em;margin:0 0 12px">{{ w.project }}</h3>
+                <sc-if value="{{ w.orphan }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:rgba(248,113,113,.09);border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:13px;color:#fca5a5;line-height:1.5">This project isn't on the team board any more, so its dates and price are gone. Delete this card with the × above, or re-add the project on the Projects tab.</div>
+                </sc-if>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+                  <div><div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85">Mint</div><div style="font-size:14px;font-weight:600">{{ w.mint }}</div></div>
+                  <div><div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85">Price</div><div style="font-size:14px;font-weight:600">{{ w.price }}</div></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+                  <label style="display:block"><span style="display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-bottom:4px">Status</span>
+                    <select value="{{ w.status }}" onChange="{{ w.setStatus }}" style="width:100%;height:38px;padding:0 10px;border-radius:8px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:13px">
+                      <option value="applied">Applied</option><option value="won">Won</option><option value="lost">Lost</option>
+                    </select>
+                  </label>
+                  <label style="display:block"><span style="display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-bottom:4px">Mint wallet</span>
+                    <select value="{{ w.wallet }}" onChange="{{ w.setWallet }}" style="width:100%;height:38px;padding:0 10px;border-radius:8px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:13px">
+                      <option value="">Not assigned</option>
+                      <sc-for list="{{ walletOpts }}" as="o" hint-placeholder-count="2">
+                        <option value="{{ o.id }}">{{ o.label }}</option>
+                      </sc-for>
+                    </select>
+                  </label>
+                </div>
+                <label style="display:block"><span style="display:block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-bottom:4px">Where I got the spot</span>
+                  <input value="{{ w.source }}" onChange="{{ w.setSource }}" placeholder="Community, raffle, DM…" style="width:100%;height:38px;padding:0 12px;border-radius:8px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:13px" style-focus="border-color:#a855f7">
+                </label>
+
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid #1e1e29">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+                    <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6f6f85">Grind checklist</span>
+                    <span style="margin-left:auto;font-size:11px;font-weight:700;color:{{ w.taskColor }}">{{ w.taskLabel }}</span>
+                  </div>
+                  <div style="height:5px;border-radius:999px;background:#1e1e29;overflow:hidden;margin-bottom:11px"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#8b5cf6,#d946ef);width:{{ w.taskWidth }}"></div></div>
+                  <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">
+                    <sc-for list="{{ w.tasks }}" as="t" hint-placeholder-count="3">
+                      <label style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:5px 7px;border-radius:7px" style-hover="background:#15151d">
+                        <input type="checkbox" checked="{{ t.done }}" onChange="{{ t.toggle }}" style="width:15px;height:15px;flex:none;accent-color:#a855f7;cursor:pointer">
+                        <span style="flex:1;font-size:13px;color:{{ t.color }};text-decoration:{{ t.strike }}">{{ t.text }}</span>
+                        <button onClick="{{ t.remove }}" style="cursor:pointer;width:20px;height:20px;border-radius:6px;border:0;background:transparent;color:#565669;font-size:13px;line-height:1" style-hover="color:#f87171">×</button>
+                      </label>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex;gap:7px">
+                    <input value="{{ w.draft }}" onChange="{{ w.setDraft }}" onKeyDown="{{ w.draftKey }}" placeholder="Add a step…" style="flex:1;height:34px;padding:0 11px;border-radius:8px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:13px" style-focus="border-color:#a855f7">
+                    <button onClick="{{ w.addTask }}" style="cursor:pointer;font-size:13px;font-weight:700;padding:0 14px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">Add</button>
+                  </div>
+                </div>
+              </article>
+            </sc-for>
+          </div>
+          <sc-if value="{{ noWl }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:44px 26px;border-radius:14px;border:1px dashed #2d2d3d;color:#6f6f85">
+              <h3 style="font-size:19px;font-weight:700;color:#e8e8f2;margin:0 0 6px">No spots yet</h3>
+              <p style="margin:0;font-size:14px">Hit <strong style="color:#c084fc">Claim spot</strong> on any project and it lands here — privately.</p>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- WALLETS (private) -->
+      <sc-if value="{{ isWallets }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:3px">
+            <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0">Wallets</h2>
+            <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:#d8b4fe">🔒 Private to {{ meName }}</span>
+          </div>
+          <p style="color:#8f8fa3;margin:0 0 20px;font-size:14px">{{ walletCount }} — never shown to other team members, not even admins.</p>
+
+          <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px;margin-bottom:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;align-items:end">
+            <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Label</span><input ref="{{ wLabel }}" placeholder="Main / Burner 2" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <label style="display:block;grid-column:span 2"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Address</span><input ref="{{ wAddr }}" placeholder="0x… or wallet.sol" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Chains</span><input ref="{{ wChains }}" placeholder="ETH, SOL" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <button onClick="{{ addWallet }}" style="cursor:pointer;font-size:14px;font-weight:700;height:42px;padding:0 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">+ Add wallet</button>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start">
+            <sc-for list="{{ wallets }}" as="w" hint-placeholder-count="3">
+              <article style="background:#0f0f16;border:1px solid {{ w.cardBorder }};border-radius:16px;padding:20px">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+                  <h3 style="font-size:19px;font-weight:700;letter-spacing:-.02em;margin:0">{{ w.label }}</h3>
+                  <sc-if value="{{ w.isMain }}" hint-placeholder-val="{{ true }}">
+                    <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff">Main</span>
+                  </sc-if>
+                  <button onClick="{{ w.remove }}" title="Delete" style="margin-left:auto;cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid #262633;background:transparent;color:#6f6f85;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center" style-hover="border-color:#f87171;color:#f87171">×</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;background:#15151d;border:1px solid #21212c;border-radius:9px;padding:7px 7px 7px 12px;margin-bottom:14px">
+                  <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#b8b8c9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ w.short }}</span>
+                  <button onClick="{{ w.copy }}" style="margin-left:auto;flex:none;cursor:pointer;font-size:12px;font-weight:700;padding:6px 12px;border-radius:7px;border:1px solid #2d2d3d;background:#1c1c26;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">{{ w.copyLabel }}</button>
+                </div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+                  <sc-for list="{{ w.chains }}" as="ch" hint-placeholder-count="2">
+                    <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.28);color:#d8b4fe">{{ ch }}</span>
+                  </sc-for>
+                </div>
+                <div style="font-size:13px;color:#8f8fa3;padding-top:12px;border-top:1px solid #1e1e29">{{ w.usage }}</div>
+                <sc-if value="{{ w.canMakeMain }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ w.makeMain }}" style="margin-top:12px;cursor:pointer;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">Set as main</button>
+                </sc-if>
+              </article>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- CALENDAR -->
+      <sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Calendar</h2>
+          <p style="color:#8f8fa3;margin:0 0 22px;font-size:14px">Every submission deadline and mint date on the team board, soonest first.</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ calendar }}" as="e" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:18px;background:#0f0f16;border:1px solid #1e1e29;border-radius:12px;padding:13px 20px;flex-wrap:wrap">
+                <div style="width:50px;flex:none">
+                  <div style="font-size:20px;font-weight:800;line-height:1;letter-spacing:-.03em">{{ e.day }}</div>
+                  <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6f6f85">{{ e.month }}</div>
+                </div>
+                <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ e.kindBg }};color:{{ e.kindFg }};border:1px solid {{ e.kindBd }}">{{ e.kind }}</span>
+                <div style="font-size:16px;font-weight:700;letter-spacing:-.02em;flex:1 1 150px">{{ e.project }}</div>
+                <span style="font-size:13px;color:#6f6f85">{{ e.rel }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ noCalendar }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:44px 26px;border-radius:14px;border:1px dashed #2d2d3d;color:#6f6f85;max-width:640px">
+              <h3 style="font-size:19px;font-weight:700;color:#e8e8f2;margin:0 0 6px">No dates yet</h3>
+              <p style="margin:0 0 16px;font-size:14px;line-height:1.6">Every submission deadline and mint date from the team board lands here. Add a project with dates on it and this fills up.</p>
+              <button onClick="{{ goProjects }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Go to Projects</button>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- GIVEAWAYS -->
+      <sc-if value="{{ isGiveaways }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1280px">
+          <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+            <div>
+              <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Giveaways</h2>
+              <p style="margin:0;color:#8f8fa3;font-size:14px">Run raffles with entry requirements. Entrants sign up on the public page; you verify and draw.</p>
+            </div>
+            <button onClick="{{ toggleNewGa }}" style="margin-left:auto;cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">{{ newGaLabel }}</button>
+          </div>
+
+          <sc-if value="{{ gaNote }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;background:{{ gaNoteBg }};border:1px solid {{ gaNoteBd }};border-radius:11px;padding:12px 16px;margin-bottom:18px">
+              <span style="font-size:14px;color:{{ gaNoteFg }};flex:1">{{ gaNote }}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ tablesMissing }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#0f0f16;border:1px solid rgba(251,146,60,.35);border-radius:16px;padding:22px;margin-bottom:20px;max-width:760px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0">One setup step left</h3>
+                <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.3);color:#fdba74">Tables missing</span>
+              </div>
+              <p style="margin:0 0 16px;font-size:14px;color:#8f8fa3;line-height:1.65">Your database doesn't have the giveaway tables yet, so nothing here can save. Open <strong style="color:#d5d5e2">supabase/patch-02-giveaways.sql</strong>, copy all of it, and run it in Supabase → SQL Editor → New query. Then check again.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <a href="supabase/patch-02-giveaways.sql" target="_blank" rel="noopener" style="font-size:14px;font-weight:700;text-decoration:none;padding:11px 18px;border-radius:9px;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Open the SQL ↗</a>
+                <button onClick="{{ recheckTables }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border-radius:9px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">I've run it — check again</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ newGa }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:18px;padding:26px;margin-bottom:22px">
+              <h3 style="font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 18px">New giveaway</h3>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px">
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Title *</span><input ref="{{ gTitle }}" placeholder="5 WL spots for Sandclock" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Project</span>
+                  <select ref="{{ gProject }}" style="width:100%;height:42px;padding:0 12px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px">
+                    <option value="">Not linked</option>
+                    <sc-for list="{{ projectOpts }}" as="o" hint-placeholder-count="4">
+                      <option value="{{ o.id }}">{{ o.label }}</option>
+                    </sc-for>
+                  </select>
+                </label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Prize</span><input ref="{{ gPrize }}" placeholder="5 WL spots" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Winners</span><input ref="{{ gWinners }}" type="number" min="1" placeholder="5" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Ends</span><input ref="{{ gEnds }}" type="datetime-local" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">X post URL</span><input ref="{{ gPost }}" placeholder="x.com/…/status/…" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+                <label style="display:block;grid-column:span 2"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Image URL <span style="color:#6f6f85">— banner on the public page</span></span><input value="{{ gImageVal }}" onChange="{{ setGImage }}" placeholder="https://…/art.png" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              </div>
+
+              <sc-if value="{{ gImageVal }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-bottom:16px">
+                  <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-bottom:8px">Preview</div>
+                  <div role="img" style="width:100%;max-width:340px;height:150px;border-radius:11px;border:1px solid #262633;background-color:#15151d;background-image:url({{ gImageVal }});background-size:cover;background-position:center"></div>
+                </div>
+              </sc-if>
+
+              <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a855f7;margin-bottom:11px">Entry requirements</div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+                <sc-for list="{{ reqTypes }}" as="r" hint-placeholder-count="7">
+                  <div style="display:flex;align-items:center;gap:11px;background:{{ r.bg }};border:1px solid {{ r.border }};border-radius:10px;padding:10px 13px;flex-wrap:wrap">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1 1 200px">
+                      <input type="checkbox" checked="{{ r.on }}" onChange="{{ r.toggle }}" style="width:16px;height:16px;flex:none;accent-color:#a855f7;cursor:pointer">
+                      <span style="font-size:14px;font-weight:600;color:{{ r.fg }}">{{ r.icon }} {{ r.label }}</span>
+                    </label>
+                    <sc-if value="{{ r.needsTarget }}" hint-placeholder-val="{{ true }}">
+                      <input value="{{ r.target }}" onChange="{{ r.setTarget }}" placeholder="{{ r.hint }}" style="flex:1 1 200px;height:36px;padding:0 12px;border-radius:8px;border:1px solid #262633;background:#0f0f16;color:#e8e8f2;font-size:13px" style-focus="border-color:#a855f7">
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button onClick="{{ createGa }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 22px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Launch giveaway</button>
+                <button onClick="{{ toggleNewGa }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border-radius:9px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#3a3a4d;color:#f4f4fa">Cancel</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <sc-for list="{{ giveaways }}" as="g" hint-placeholder-count="2">
+              <article style="background:#0f0f16;border:1px solid {{ g.cardBorder }};border-radius:16px;padding:22px">
+                <sc-if value="{{ g.image }}" hint-placeholder-val="{{ false }}">
+                  <div role="img" style="width:100%;height:120px;border-radius:11px;border:1px solid #21212c;background-color:#15151d;background-image:url({{ g.image }});background-size:cover;background-position:center;margin-bottom:16px"></div>
+                </sc-if>
+                <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+                  <div style="flex:1 1 240px">
+                    <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px;flex-wrap:wrap">
+                      <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ g.statusBg }};color:{{ g.statusFg }};border:1px solid {{ g.statusBd }}">{{ g.statusLabel }}</span>
+                      <sc-if value="{{ g.projectName }}" hint-placeholder-val="{{ true }}">
+                        <span style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c084fc">{{ g.projectName }}</span>
+                      </sc-if>
+                      <span style="font-size:12px;color:#6f6f85">{{ g.timing }}</span>
+                    </div>
+                    <h3 style="font-size:21px;font-weight:800;letter-spacing:-.025em;margin:0">{{ g.title }}</h3>
+                  </div>
+                  <button onClick="{{ g.remove }}" title="Delete" style="cursor:pointer;width:26px;height:26px;border-radius:7px;border:1px solid #262633;background:transparent;color:#6f6f85;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center" style-hover="border-color:#f87171;color:#f87171">×</button>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-bottom:16px">
+                  <sc-for list="{{ g.stats }}" as="s" hint-placeholder-count="4">
+                    <div style="background:#15151d;border:1px solid #21212c;border-radius:10px;padding:11px 13px">
+                      <div style="font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1;color:{{ s.color }}">{{ s.value }}</div>
+                      <div style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85;margin-top:2px">{{ s.label }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <sc-if value="{{ g.hasReqs }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px">
+                    <sc-for list="{{ g.reqs }}" as="r" hint-placeholder-count="3">
+                      <span style="font-size:12px;font-weight:600;padding:5px 11px;border-radius:8px;background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.26);color:#d8b4fe">{{ r.icon }} {{ r.label }}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding-top:14px;border-top:1px solid #1e1e29">
+                  <button onClick="{{ g.openEntries }}" style="cursor:pointer;font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;border:1px solid #262633;background:transparent;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">{{ g.entriesLabel }}</button>
+                  <button onClick="{{ g.verifyAll }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">Verify all</button>
+                  <button onClick="{{ g.draw }}" style="cursor:pointer;font-size:13px;font-weight:700;padding:8px 14px;border-radius:8px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">🎲 Draw winners</button>
+                  <button onClick="{{ g.announce }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 14px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">Announce to Discord</button>
+                  <span style="font-size:13px;color:{{ g.noteColor }};margin-left:auto">{{ g.note }}</span>
+                </div>
+
+                <sc-if value="{{ g.showEntries }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:16px;padding-top:16px;border-top:1px solid #1e1e29">
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                      <sc-for list="{{ g.entries }}" as="e" hint-placeholder-count="4">
+                        <div style="display:flex;align-items:center;gap:11px;background:{{ e.rowBg }};border:1px solid {{ e.rowBorder }};border-radius:9px;padding:9px 13px;flex-wrap:wrap">
+                          <sc-if value="{{ e.won }}" hint-placeholder-val="{{ true }}">
+                            <span style="font-size:14px">🏆</span>
+                          </sc-if>
+                          <span style="font-size:14px;font-weight:700;letter-spacing:-.01em;flex:1 1 130px">{{ e.handle }}</span>
+                          <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:#8f8fa3;flex:1 1 150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ e.wallet }}</span>
+                          <span style="font-size:12px;color:#6f6f85">{{ e.checkLabel }}</span>
+                          <button onClick="{{ e.toggleVerify }}" style="cursor:pointer;font-size:12px;font-weight:700;padding:5px 11px;border-radius:7px;border:1px solid {{ e.vBd }};background:{{ e.vBg }};color:{{ e.vFg }}">{{ e.vLabel }}</button>
+                          <button onClick="{{ e.remove }}" style="cursor:pointer;width:22px;height:22px;border-radius:6px;border:0;background:transparent;color:#565669;font-size:13px;line-height:1" style-hover="color:#f87171">×</button>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <sc-if value="{{ g.noEntries }}" hint-placeholder-val="{{ false }}">
+                      <div style="font-size:13px;color:#6f6f85;padding:14px 0">No entries yet. Share the public page — the giveaway shows at the top.</div>
+                    </sc-if>
+                  </div>
+                </sc-if>
+              </article>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ noGiveaways }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:44px 26px;border-radius:14px;border:1px dashed #2d2d3d;color:#6f6f85;max-width:640px">
+              <h3 style="font-size:19px;font-weight:700;color:#e8e8f2;margin:0 0 6px">No giveaways yet</h3>
+              <p style="margin:0 0 16px;font-size:14px;line-height:1.6">Create one and it appears at the top of the public page with an entry form. Pick the requirements — follow, retweet, comment, hold, join — and the form collects them.</p>
+              <button onClick="{{ toggleNewGa }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">+ New giveaway</button>
+            </div>
+          </sc-if>
+
+          <div style="margin-top:22px;background:#0f0f16;border:1px solid rgba(251,146,60,.25);border-radius:16px;padding:20px;max-width:820px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <h3 style="font-size:16px;font-weight:800;letter-spacing:-.02em;margin:0">Automatic verification needs the bot</h3>
+              <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.3);color:#fdba74">Not running</span>
+            </div>
+            <p style="margin:0;font-size:13px;color:#8f8fa3;line-height:1.65">Right now entries arrive unverified and you approve them here — that works, it's just manual. Checking follows, retweets and comments automatically requires a bot process with X API access, which can't run inside a web page. I've written it for you: <strong style="color:#d5d5e2">bot/</strong> holds the Discord bot and the verification worker, and <strong style="color:#d5d5e2">bot/README.md</strong> covers deploying it. Once it's live it fills these checkmarks by itself and posts winners to your channel.</p>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- STATS -->
+      <sc-if value="{{ isStats }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Stats</h2>
+          <p style="color:#8f8fa3;margin:0 0 22px;max-width:62ch;font-size:14px">Your grind, measured. Everything on this page counts only your own spots.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-bottom:20px">
+            <sc-for list="{{ myStats }}" as="s" hint-placeholder-count="4">
+              <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:14px;padding:15px 17px;transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s">
+                <div style="font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1.1;color:{{ s.color }}">{{ s.value }}</div>
+                <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:#6f6f85;margin-top:2px">{{ s.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start">
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0 0 3px">Outcome split</h3>
+              <p style="margin:0 0 18px;font-size:13px;color:#6f6f85">Where your applications land.</p>
+              <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap">
+                <div style="position:relative;width:132px;height:132px;flex:none;border-radius:999px;background:{{ donut }}">
+                  <div style="position:absolute;inset:26px;border-radius:999px;background:#0f0f16;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                    <span style="font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1">{{ winRate }}</span>
+                    <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6f6f85">win rate</span>
+                    <span style="font-size:10px;color:#565669;margin-top:2px">{{ decidedLabel }}</span>
+                  </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px;flex:1 1 130px">
+                  <sc-for list="{{ outcomes }}" as="o" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:9px">
+                      <span style="width:10px;height:10px;flex:none;border-radius:3px;background:{{ o.color }}"></span>
+                      <span style="flex:1;font-size:13px;font-weight:600">{{ o.label }}</span>
+                      <span style="font-size:13px;color:#8f8fa3">{{ o.count }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0 0 3px">Mints per month</h3>
+              <p style="margin:0 0 18px;font-size:13px;color:#6f6f85">Board-wide, next six months.</p>
+              <div style="display:flex;align-items:flex-end;gap:10px;height:130px">
+                <sc-for list="{{ monthBars }}" as="b" hint-placeholder-count="6">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end">
+                    <span style="font-size:12px;font-weight:700;color:{{ b.labelColor }}">{{ b.count }}</span>
+                    <div style="width:100%;border-radius:6px 6px 3px 3px;background:{{ b.color }};height:{{ b.height }}"></div>
+                    <span style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6f6f85">{{ b.month }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0 0 3px">Chain exposure</h3>
+              <p style="margin:0 0 18px;font-size:13px;color:#6f6f85">Which chains your spots sit on.</p>
+              <div style="display:flex;flex-direction:column;gap:13px">
+                <sc-for list="{{ chainBars }}" as="c" hint-placeholder-count="3">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px"><span>{{ c.chain }}</span><span style="color:#8f8fa3">{{ c.count }}</span></div>
+                    <div style="height:9px;border-radius:999px;background:#1e1e29;overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ c.color }};width:{{ c.width }}"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ noChains }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;color:#6f6f85">Claim a spot and your chain split appears here.</div>
+              </sc-if>
+            </div>
+
+            <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0 0 3px">Checklist completion</h3>
+              <p style="margin:0 0 18px;font-size:13px;color:#6f6f85">How far through the grind you are on each.</p>
+              <div style="display:flex;flex-direction:column;gap:13px">
+                <sc-for list="{{ grindBars }}" as="g" hint-placeholder-count="3">
+                  <div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:6px"><span>{{ g.project }}</span><span style="color:{{ g.color }}">{{ g.label }}</span></div>
+                    <div style="height:9px;border-radius:999px;background:#1e1e29;overflow:hidden"><div style="height:100%;border-radius:999px;background:{{ g.bar }};width:{{ g.width }}"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ noGrind }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:13px;color:#6f6f85">No checklists yet.</div>
+              </sc-if>
+            </div>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- MODERATION -->
+      <sc-if value="{{ isModeration }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+            <div>
+              <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Moderation</h2>
+              <p style="margin:0;color:#8f8fa3;font-size:14px">Everything the public posted. Delete junk, pin the good stuff, promote real collabs onto the board.</p>
+            </div>
+            <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ deleteSelected }}" style="margin-left:auto;cursor:pointer;font-size:14px;font-weight:700;padding:11px 18px;border-radius:9px;border:1px solid rgba(248,113,113,.4);background:rgba(248,113,113,.12);color:#f87171" style-hover="background:rgba(248,113,113,.2)">Delete {{ selectedCount }} selected</button>
+            </sc-if>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+            <sc-for list="{{ modFilters }}" as="f" hint-placeholder-count="4">
+              <button onClick="{{ f.pick }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 15px;border-radius:9px;border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ inbox }}" as="i" hint-placeholder-count="4">
+              <div style="display:flex;align-items:flex-start;gap:14px;background:#0f0f16;border:1px solid {{ i.cardBorder }};border-radius:12px;padding:15px 18px;flex-wrap:wrap">
+                <input type="checkbox" checked="{{ i.selected }}" onChange="{{ i.toggle }}" style="width:16px;height:16px;margin-top:4px;accent-color:#a855f7;cursor:pointer">
+                <span style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ i.tagBg }};color:{{ i.tagFg }};border:1px solid {{ i.tagBd }}">{{ i.typeLabel }}</span>
+                <div style="flex:1 1 240px;min-width:200px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="font-size:16px;font-weight:700;letter-spacing:-.015em">{{ i.title }}</span>
+                    <sc-if value="{{ i.pinned }}" hint-placeholder-val="{{ true }}">
+                      <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:rgba(168,85,247,.14);border:1px solid rgba(168,85,247,.32);color:#d8b4fe">Pinned</span>
+                    </sc-if>
+                  </div>
+                  <div style="font-size:13px;color:#6f6f85">{{ i.meta }}</div>
+                  <sc-if value="{{ i.body }}" hint-placeholder-val="{{ true }}">
+                    <div style="font-size:13px;color:#8f8fa3;margin-top:6px;line-height:1.5">{{ i.body }}</div>
+                  </sc-if>
+                </div>
+                <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap">
+                  <button onClick="{{ i.pin }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 13px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">{{ i.pinLabel }}</button>
+                  <button onClick="{{ i.promote }}" style="cursor:pointer;font-size:13px;font-weight:700;padding:8px 13px;border-radius:8px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">→ Board</button>
+                  <button onClick="{{ i.remove }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 13px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#f87171;color:#f87171">Delete</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ noInbox }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:44px 26px;border-radius:14px;border:1px dashed #2d2d3d;color:#6f6f85">
+              <h3 style="font-size:19px;font-weight:700;color:#e8e8f2;margin:0 0 6px">Nothing to moderate</h3>
+              <p style="margin:0;font-size:14px">Public posts from the front page show up here.</p>
+            </div>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <!-- TEAM -->
+      <sc-if value="{{ isTeam }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:1180px">
+          <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Team</h2>
+          <p style="color:#8f8fa3;margin:0 0 22px;max-width:64ch;font-size:14px">Admins can moderate the public feed and manage the shared board. Every member's wallets and WL spots stay private to them — this list can't open them.</p>
+
+          <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:20px;margin-bottom:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;align-items:end">
+            <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Name</span><input ref="{{ mName }}" placeholder="Jules" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Handle</span><input ref="{{ mHandle }}" placeholder="@jules" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Role</span>
+              <select ref="{{ mRole }}" style="width:100%;height:42px;padding:0 12px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px"><option value="member">Member</option><option value="admin">Admin</option></select>
+            </label>
+            <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Passcode</span><input ref="{{ mPass }}" placeholder="set a passcode" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <button onClick="{{ addMember }}" style="cursor:pointer;font-size:14px;font-weight:700;height:42px;padding:0 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">+ Add member</button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ team }}" as="m" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:14px;background:#0f0f16;border:1px solid #1e1e29;border-radius:12px;padding:14px 18px;flex-wrap:wrap">
+                <span style="width:36px;height:36px;flex:none;border-radius:999px;background:{{ m.avatarBg }};color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center">{{ m.initials }}</span>
+                <div style="flex:1 1 140px">
+                  <div style="font-size:16px;font-weight:700;letter-spacing:-.015em">{{ m.name }}</div>
+                  <div style="font-size:13px;color:#6f6f85">{{ m.handle }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  <span style="font-size:12px;color:#565669">🔒 wallets &amp; WL private</span>
+                  <span style="font-size:13px;color:#8f8fa3">{{ m.contribution }}</span>
+                  <sc-if value="{{ m.canSeePass }}" hint-placeholder-val="{{ false }}">
+                    <span style="display:inline-flex;align-items:center;gap:7px">
+                      <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;padding:4px 9px;border-radius:7px;background:#15151d;border:1px solid #262633;color:#d5d5e2">{{ m.passShown }}</span>
+                      <button onClick="{{ m.togglePass }}" style="cursor:pointer;font-size:12px;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid #262633;background:transparent;color:#8f8fa3" style-hover="border-color:#a855f7;color:#e9d5ff">{{ m.passLabel }}</button>
+                      <button onClick="{{ m.copyPass }}" style="cursor:pointer;font-size:12px;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid #262633;background:transparent;color:#8f8fa3" style-hover="border-color:#a855f7;color:#e9d5ff">{{ m.copyLabel }}</button>
+                      <button onClick="{{ m.resetPass }}" style="cursor:pointer;font-size:12px;font-weight:600;padding:5px 10px;border-radius:7px;border:1px solid #262633;background:transparent;color:#8f8fa3" style-hover="border-color:#a855f7;color:#e9d5ff">New code</button>
+                    </span>
+                  </sc-if>
+                </div>
+                <div style="display:flex;gap:8px;margin-left:auto;align-items:center;flex-wrap:wrap">
+                  <span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:{{ m.roleBg }};color:{{ m.roleFg }};border:1px solid {{ m.roleBd }}">{{ m.role }}</span>
+                  <sc-if value="{{ m.canEdit }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ m.toggleRole }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 13px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#a855f7;color:#e9d5ff">{{ m.toggleLabel }}</button>
+                  </sc-if>
+                  <sc-if value="{{ m.canRemove }}" hint-placeholder-val="{{ true }}">
+                    <button onClick="{{ m.remove }}" style="cursor:pointer;font-size:13px;font-weight:600;padding:8px 13px;border-radius:8px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#f87171;color:#f87171">Remove</button>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-if>
+
+      <!-- SETTINGS / X -->
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+        <section style="padding:26px 28px 72px;max-width:900px">
+          <h2 style="font-size:26px;font-weight:800;letter-spacing:-.03em;margin:0 0 3px">Settings</h2>
+          <p style="color:#8f8fa3;margin:0 0 22px;max-width:64ch;font-size:14px">Database, X trends and Discord alerts.</p>
+
+          <div style="background:#0f0f16;border:1px solid {{ dbCardBorder }};border-radius:16px;padding:22px;margin-bottom:18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0">Database</h3>
+              <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ dbBg }};color:{{ dbFg }};border:1px solid {{ dbBd }}">{{ dbStatus }}</span>
+            </div>
+            <p style="margin:0 0 16px;font-size:13px;color:#8f8fa3;line-height:1.6">{{ dbBlurb }}</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:16px">
+              <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Project URL</span><input value="{{ dbUrl }}" onChange="{{ setDbUrl }}" placeholder="https://abcdefgh.supabase.co" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Anon public key</span><input value="{{ dbKey }}" onChange="{{ setDbKey }}" placeholder="eyJhbGciOi…" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button onClick="{{ connectDb }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Connect &amp; test</button>
+              <sc-if value="{{ dbConnected }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ disconnectDb }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border-radius:9px;border:1px solid #262633;background:transparent;color:#a9a9bd" style-hover="border-color:#f87171;color:#f87171">Disconnect</button>
+              </sc-if>
+              <sc-if value="{{ dbConnected }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ seedDb }}" style="cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border-radius:9px;border:1px solid #262633;background:transparent;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">Push starter data</button>
+              </sc-if>
+              <span style="font-size:13px;color:{{ dbNoteColor }}">{{ dbNote }}</span>
+            </div>
+            <p style="margin:14px 0 0;font-size:12px;color:#565669;line-height:1.6">The anon key is safe to paste here — the row-level security rules in <strong style="color:#8f8fa3">supabase/schema.sql</strong> are what protect the data. Never use the service_role key.</p>
+          </div>
+
+          <h3 style="font-size:19px;font-weight:800;letter-spacing:-.025em;margin:0 0 3px">X integration</h3>
+          <p style="color:#8f8fa3;margin:0 0 18px;max-width:64ch;font-size:14px">Pull trending crypto/NFT topics and project accounts straight into the hub.</p>
+
+          <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:22px;margin-bottom:18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0">Connection</h3>
+              <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ xStatusBg }};color:{{ xStatusFg }};border:1px solid {{ xStatusBd }}">{{ xStatus }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px">
+              <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Backend endpoint</span><input ref="{{ xEndpoint }}" placeholder="https://api.yoursite.com/x/trends" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              <label style="display:block"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Accounts to watch</span><input ref="{{ xAccounts }}" placeholder="@zeneca, @punk9059" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            </div>
+            <button onClick="{{ xConnect }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Test connection</button>
+            <p style="margin:14px 0 0;font-size:13px;color:#8f8fa3;line-height:1.6">The X API can't be called from the browser — the key would be public and X blocks cross-origin requests. It needs a small server (a serverless function is enough) holding the key, exposing the two endpoints this hub reads: recent search for project mentions and trends by location. Paste that URL above once it exists and this panel goes live.</p>
+          </div>
+
+          <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:22px">
+            <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px">Trending list shown on the site</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+              <sc-for list="{{ xTrends }}" as="x" hint-placeholder-count="5">
+                <div style="display:flex;align-items:center;gap:12px;background:#15151d;border:1px solid #21212c;border-radius:10px;padding:10px 14px">
+                  <span style="font-size:13px;font-weight:800;color:#565669;width:20px">{{ x.rank }}</span>
+                  <span style="flex:1;font-size:14px;font-weight:700">{{ x.tag }}</span>
+                  <span style="font-size:12px;color:#6f6f85">{{ x.meta }}</span>
+                  <button onClick="{{ x.remove }}" style="cursor:pointer;width:24px;height:24px;border-radius:7px;border:1px solid #262633;background:transparent;color:#6f6f85;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center" style-hover="border-color:#f87171;color:#f87171">×</button>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+              <label style="display:block;flex:1 1 180px"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Topic</span><input ref="{{ xTag }}" placeholder="#Sandclock" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              <label style="display:block;flex:1 1 140px"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Posts</span><input ref="{{ xCount }}" placeholder="12.4K posts" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+              <button onClick="{{ addTrend }}" style="cursor:pointer;font-size:14px;font-weight:700;height:42px;padding:0 20px;border-radius:9px;border:1px solid #262633;background:transparent;color:#d5d5e2" style-hover="border-color:#a855f7;color:#e9d5ff">+ Add topic</button>
+            </div>
+          </div>
+
+          <div style="background:#0f0f16;border:1px solid #1e1e29;border-radius:16px;padding:22px;margin-top:18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+              <h3 style="font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0">Discord alerts</h3>
+              <span style="margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:{{ hookStatusBg }};color:{{ hookStatusFg }};border:1px solid {{ hookStatusBd }}">{{ hookStatus }}</span>
+            </div>
+            <p style="margin:0 0 16px;font-size:13px;color:#8f8fa3;line-height:1.6">Paste a channel webhook URL (Discord → Server Settings → Integrations → Webhooks) and the hub posts there when a collab drops or a deadline is about to close.</p>
+            <label style="display:block;margin-bottom:14px"><span style="display:block;font-size:13px;color:#a9a9bd;margin-bottom:6px">Webhook URL</span><input value="{{ hookUrl }}" onChange="{{ setHookUrl }}" placeholder="https://discord.com/api/webhooks/…" style="width:100%;height:42px;padding:0 14px;border-radius:9px;border:1px solid #262633;background:#15151d;color:#e8e8f2;font-size:14px" style-focus="border-color:#a855f7"></label>
+            <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px">
+              <sc-for list="{{ hookEvents }}" as="h" hint-placeholder-count="3">
+                <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                  <input type="checkbox" checked="{{ h.on }}" onChange="{{ h.toggle }}" style="width:16px;height:16px;accent-color:#a855f7;cursor:pointer">
+                  <span style="font-size:14px;color:#d5d5e2">{{ h.label }}</span>
+                </label>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button onClick="{{ testHook }}" style="cursor:pointer;font-size:14px;font-weight:700;padding:11px 20px;border-radius:9px;border:0;background:linear-gradient(135deg,#8b5cf6,#d946ef);color:#fff" style-hover="filter:brightness(1.12)">Send test message</button>
+              <span style="font-size:13px;color:#8f8fa3">{{ hookNote }}</span>
+            </div>
+          </div>
+        </section>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;hypeWeight&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:60,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:5,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Priority ranking&quot;}}">
+const DAY = 86400e3, HOUR = 3600e3;
+const iso = d => new Date(Date.now() + d * DAY).toISOString().slice(0, 10);
+
+const SEED_MEMBERS = [
+  { id: "m1", name: "Ace", handle: "@Cutieacee", role: "owner", pass: "kn7v-QRD2-mth9", color: "#8b5cf6" },
+  { id: "m2", name: "Spain", handle: "@SPNRDGN", role: "admin", pass: "pw4x-JLB8-zqf3", color: "#d946ef" },
+  { id: "m3", name: "Eyszi", handle: "@Eyszii_", role: "admin", pass: "hd6m-VTC5-ryb1", color: "#38bdf8" }
+];
+
+const SEED_PROJECTS = [
+  { id: "c1", project: "Sandclock", chain: "ETH", manager: "@sandclock_cm", dm: "https://t.me/sandclock_cm", spots: "40", deadline: iso(3), mint: iso(11), price: "0.019 ETH", supply: "3333", hype: 9, rules: "3 quality replies + 1 quote post. Must follow both accounts. No gm spam.", notes: "CM answers fastest 22:00–01:00 UTC.", giveaway: true, addedBy: "m1", ts: Date.now() - 4 * DAY },
+  { id: "c2", project: "Kilnwork", chain: "SOL", manager: "@kiln_maya", dm: "https://t.me/kiln_maya", spots: "15", deadline: iso(1), mint: iso(6), price: "Free", supply: "5000", hype: 7, rules: "Hold 1 partner NFT. Submit wallet in the form pinned in their TG.", notes: "", giveaway: true, addedBy: "m2", ts: Date.now() - 3 * DAY },
+  { id: "c3", project: "Ostara", chain: "ETH", manager: "@ostara_collabs", dm: "https://t.me/ostara_collabs", spots: "25", deadline: iso(-1), mint: iso(24), price: "0.02 ETH", supply: "3333", hype: 6, rules: "Invite 2 friends to the TG, post the mint art.", notes: "Deadline passed — check if they extend.", giveaway: false, addedBy: "m1", ts: Date.now() - 6 * DAY },
+  { id: "c4", project: "Halcyon Bay", chain: "BTC", manager: "@halcyon_cm", dm: "", spots: "60", deadline: iso(8), mint: iso(30), price: "0.0004 BTC", supply: "1500", hype: 8, rules: "Active in TG for 7 days, no requirement to post.", notes: "Ordinals — needs a taproot wallet.", giveaway: true, addedBy: "m3", ts: Date.now() - 2 * DAY },
+  { id: "c5", project: "Molten", chain: "ETH", manager: "@molten_zed", dm: "https://t.me/molten_zed", spots: "10", deadline: iso(5), mint: iso(45), price: "0.05 ETH", supply: "999", hype: 4, rules: "Whitelist by application only. Show a portfolio.", notes: "Low conviction, only if time allows.", giveaway: false, addedBy: "m2", ts: Date.now() - DAY }
+];
+
+const SEED_WALLETS = {
+  m1: [
+    { id: "w1", label: "Main", address: "0x8f2c41Ae7bD09c5E13aa4482e6C1f70d9B33aE20", chains: ["ETH", "BASE"], main: true },
+    { id: "w2", label: "Mint burner", address: "0x4a19Cc80F5b7e2249dA0Ef31b8C6d0512e7a91Bd", chains: ["ETH"], main: false },
+    { id: "w3", label: "Solana", address: "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", chains: ["SOL"], main: false }
+  ]
+};
+
+const SEED_WL = {
+  m1: [
+    { id: "x1", projectId: "c1", status: "applied", wallet: "w1", source: "Nightshift TG" },
+    { id: "x2", projectId: "c3", status: "won", wallet: "w2", source: "Ostara Discord raffle" }
+  ]
+};
+
+const SEED_X = [
+  { id: "t1", tag: "#Sandclock", meta: "12.4K posts · NFT", delta: "+340%" },
+  { id: "t2", tag: "Ordinals", meta: "48K posts · Crypto", delta: "+88%" },
+  { id: "t3", tag: "#KilnworkMint", meta: "6.1K posts · NFT", delta: "+210%" },
+  { id: "t4", tag: "Base season", meta: "22K posts · Crypto", delta: "+31%" },
+  { id: "t5", tag: "#WLgrind", meta: "3.8K posts · Community", delta: "−12%" }
+];
+
+const STATUSES = {
+  applied: { label: "Applied", bg: "rgba(56,189,248,.12)", fg: "#7dd3fc", bd: "rgba(56,189,248,.3)" },
+  won: { label: "Won", bg: "rgba(74,222,128,.12)", fg: "#86efac", bd: "rgba(74,222,128,.3)" },
+  lost: { label: "Lost", bg: "#121219", fg: "#565669", bd: "#21212c" }
+};
+
+const TYPES = {
+  alpha: { label: "Alpha", bg: "rgba(168,85,247,.14)", fg: "#d8b4fe", bd: "rgba(168,85,247,.32)" },
+  collab: { label: "Collab", bg: "rgba(56,189,248,.12)", fg: "#7dd3fc", bd: "rgba(56,189,248,.3)" },
+  mint: { label: "Free mint", bg: "rgba(74,222,128,.12)", fg: "#86efac", bd: "rgba(74,222,128,.3)" },
+  shill: { label: "Shill", bg: "rgba(251,146,60,.12)", fg: "#fdba74", bd: "rgba(251,146,60,.3)" },
+  help: { label: "Question", bg: "#15151d", fg: "#a9a9bd", bd: "#262633" }
+};
+
+const ROLES = {
+  owner: { bg: "linear-gradient(135deg,#8b5cf6,#d946ef)", fg: "#fff", bd: "transparent" },
+  admin: { bg: "rgba(168,85,247,.14)", fg: "#d8b4fe", bd: "rgba(168,85,247,.32)" },
+  member: { bg: "#15151d", fg: "#a9a9bd", bd: "#262633" }
+};
+
+const MK = "collabhub.members.v4", PK = "collabhub.projects.v1", FK = "collabhub.feed.v1", XK = "collabhub.xtrends.v1";
+const wKey = id => "collabhub.wallets." + id;
+const lKey = id => "collabhub.wl." + id;
+
+class Component extends DCLogic {
+  state = {
+    locked: true, note: "", pick: "m1", shownPass: "", copiedPass: "", me: null, tab: "home", adding: false,
+    members: SEED_MEMBERS, projects: SEED_PROJECTS, feed: [], xtrends: SEED_X,
+    wallets: [], wl: [], copied: "", modFilter: "all", selected: [],
+    drafts: {}, alertsOff: false, hookUrl: "", hookNote: "",
+    cloud: false, dbUrl: "", dbKey: "", dbNote: "", dbNoteOk: true,
+    pasting: false, pasteText: "", parsed: null, parseNote: "",
+    giveaways: [], entries: {}, newGa: false, gaNote: "", openGa: "",
+    reqOn: { follow: true, retweet: true, comment: false, like: false, quote: false, discord: false, telegram: false, hold: false, wallet: true },
+    reqTarget: { follow: "", hold: "" }, gaNotes: {},
+    gImage: "", tablesMissing: false, gaNoteOk: true, gaNoteSetup: false,
+    hookEvents: { drop: true, deadline: true, won: false }
+  };
+
+  static DEFAULT_TASKS = ["Follow the project on X", "Join their Telegram", "3 quality replies", "Submit wallet in the form"];
+
+  constructor(p) {
+    super(p);
+    this.refPass = React.createRef();
+    "Project Chain Manager Dm Spots Deadline Mint Price Supply Hype Rules Notes Giveaway X Tg".split(" ")
+      .forEach(n => { this["n" + n] = React.createRef(); });
+    ["wLabel", "wAddr", "wChains", "mName", "mHandle", "mRole", "mPass", "xEndpoint", "xAccounts", "xTag", "xCount",
+     "gTitle", "gProject", "gPrize", "gWinners", "gEnds", "gPost"]
+      .forEach(n => { this[n] = React.createRef(); });
+  }
+
+  read(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  }
+  write(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+
+  db() { return window.CollabDB; }
+
+  componentDidMount() {
+    const cfg = window.CollabDB ? window.CollabDB.config() : null;
+    this.setState({ members: this.read(MK, SEED_MEMBERS), dbUrl: (cfg && cfg.url) || "", dbKey: (cfg && cfg.key) || "" });
+    this.load();
+    const db = this.db();
+    if (db) this.unwatch = db.watch(["posts", "projects", "trends"], () => this.load());
+  }
+  componentWillUnmount() { if (this.unwatch) this.unwatch(); }
+
+  load() {
+    const db = this.db();
+    if (!db) return;
+    if (db.mode() === "cloud") db.test().then(r => this.setState({ cloud: r.ok }));
+    else this.setState({ cloud: false });
+    db.listProjects(SEED_PROJECTS).then(projects => this.setState({ projects }));
+    db.listPosts([]).then(feed => this.setState({ feed }));
+    db.listTrends(SEED_X).then(xtrends => this.setState({ xtrends }));
+    db.listGiveaways().then(giveaways => {
+      this.setState({ giveaways, tablesMissing: !!db.missingTables });
+      giveaways.forEach(g => db.listEntries(g.id).then(es => {
+        this.setState(s => ({ entries: { ...s.entries, [g.id]: es } }));
+      }));
+    });
+  }
+
+  refreshEntries(gid) {
+    this.db().listEntries(gid).then(v => this.setState(s => ({ entries: { ...s.entries, [gid]: v } })));
+  }
+  gaSay(msg, ok, setup) {
+    clearTimeout(this._gaTimer);
+    this.setState({ gaNote: msg, gaNoteOk: ok !== false, gaNoteSetup: !!setup });
+    /* only transient confirmations expire; errors stay until something replaces them */
+    if (ok !== false && msg && !/^saving/i.test(msg)) {
+      this._gaTimer = setTimeout(() => this.setState({ gaNote: "" }), 6000);
+    }
+  }
+
+  REQ_META = {
+    follow:   { icon: "👤", label: "Follow on X", needsTarget: true, hint: "@handle, @handle2" },
+    retweet:  { icon: "🔁", label: "Retweet the post" },
+    like:     { icon: "❤", label: "Like the post" },
+    comment:  { icon: "💬", label: "Comment / reply" },
+    quote:    { icon: "🗣", label: "Quote post it" },
+    discord:  { icon: "🎮", label: "Join the Discord" },
+    telegram: { icon: "✈", label: "Join the Telegram" },
+    hold:     { icon: "💎", label: "Hold an NFT", needsTarget: true, hint: "which collection" },
+    wallet:   { icon: "🔑", label: "Submit wallet address" }
+  };
+
+  buildReqs() {
+    const out = [];
+    Object.keys(this.REQ_META).forEach(k => {
+      if (!this.state.reqOn[k]) return;
+      const m = this.REQ_META[k];
+      const t = (this.state.reqTarget[k] || "").trim();
+      out.push({
+        type: k,
+        label: m.needsTarget && t ? m.label.replace(/ on X$/, "") + " " + t : m.label,
+        targets: t ? t.split(",").map(s => s.trim()).filter(Boolean) : []
+      });
+    });
+    return out;
+  }
+
+  loadPrivate(id) {
+    this.setState({
+      wallets: this.read(wKey(id), SEED_WALLETS[id] || []),
+      wl: this.read(lKey(id), SEED_WL[id] || [])
+    });
+  }
+
+  saveMembers(members) { this.setState({ members }); this.write(MK, members); }
+  saveProjects(projects) { this.setState({ projects }); this.write(PK, projects); }
+  saveFeed(feed) { this.setState({ feed }); this.write(FK, feed); }
+  saveX(xtrends) { this.setState({ xtrends }); this.write(XK, xtrends); }
+  saveWallets(wallets) { this.setState({ wallets }); this.write(wKey(this.state.me), wallets); }
+  saveWl(wl) { this.setState({ wl }); this.write(lKey(this.state.me), wl); }
+
+  addProjectRow(p) { this.db().createProject(p, this.state.projects).then(projects => this.setState({ projects })); }
+  delProjectRow(id) { this.db().deleteProject(id, this.state.projects).then(projects => this.setState({ projects })); }
+  delPostRow(id) { this.db().deletePost(id, this.state.feed).then(feed => this.setState({ feed })); }
+  patchPostRow(id, patch) { this.db().updatePost(id, patch, this.state.feed).then(feed => this.setState({ feed })); }
+
+  unlock = () => {
+    const m = this.state.members.find(x => x.id === this.state.pick);
+    const got = this.refPass.current ? this.refPass.current.value : "";
+    if (m && got === m.pass) {
+      this.setState({ locked: false, me: m.id, note: "" });
+      this.loadPrivate(m.id);
+    } else this.setState({ note: "Wrong passcode for that account." });
+  };
+  passKey = e => { if (e.key === "Enter") this.unlock(); };
+
+  addProject = () => {
+    const v = n => (this["n" + n].current ? this["n" + n].current.value.trim() : "");
+    const project = v("Project");
+    if (!project) return;
+    this.addProjectRow({
+      id: "c" + Date.now(), project, chain: (v("Chain") || "—").toUpperCase(),
+      manager: v("Manager") || "—", dm: v("Dm"), spots: v("Spots") || "—",
+      deadline: v("Deadline"), mint: v("Mint"), price: v("Price") || "—",
+      supply: v("Supply") || "—", hype: Number(v("Hype")) || 5,
+      rules: v("Rules"), notes: v("Notes"), x: v("X"), tg: v("Tg"),
+      giveaway: this.nGiveaway.current ? this.nGiveaway.current.checked : false,
+      addedBy: this.state.me, ts: Date.now()
+    });
+    this.setState({ adding: false });
+  };
+
+  addWallet = () => {
+    const label = this.wLabel.current ? this.wLabel.current.value.trim() : "";
+    const address = this.wAddr.current ? this.wAddr.current.value.trim() : "";
+    if (!label || !address) return;
+    const chains = (this.wChains.current ? this.wChains.current.value : "")
+      .split(",").map(s => s.trim().toUpperCase()).filter(Boolean);
+    this.saveWallets([...this.state.wallets, {
+      id: "w" + Date.now(), label, address,
+      chains: chains.length ? chains : ["ETH"], main: this.state.wallets.length === 0
+    }]);
+    [this.wLabel, this.wAddr, this.wChains].forEach(r => { if (r.current) r.current.value = ""; });
+  };
+
+  /* xxxx-XXXX-xxxx, no look-alike characters (0/O, 1/l/I) */
+  genPass() {
+    const lo = "abcdefghijkmnpqrstuvwxyz23456789";
+    const hi = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const pick = (set, n) => Array.from({ length: n }, () =>
+      set[Math.floor(Math.random() * set.length)]).join("");
+    return pick(lo, 4) + "-" + pick(hi, 4) + "-" + pick(lo, 4);
+  }
+
+  addMember = () => {
+    const name = this.mName.current ? this.mName.current.value.trim() : "";
+    if (!name) return;
+    const handle = this.mHandle.current ? this.mHandle.current.value.trim() : "";
+    const colors = ["#8b5cf6", "#d946ef", "#38bdf8", "#4ade80", "#fb923c"];
+    this.saveMembers([...this.state.members, {
+      id: "m" + Date.now(), name,
+      handle: handle || "@" + name.toLowerCase().replace(/\s+/g, ""),
+      role: this.mRole.current ? this.mRole.current.value : "member",
+      pass: (this.mPass.current && this.mPass.current.value.trim()) || this.genPass(),
+      color: colors[this.state.members.length % colors.length]
+    }]);
+    [this.mName, this.mHandle, this.mPass].forEach(r => { if (r.current) r.current.value = ""; });
+  };
+
+  addTrend = () => {
+    const tag = this.xTag.current ? this.xTag.current.value.trim() : "";
+    if (!tag) return;
+    const meta = (this.xCount.current && this.xCount.current.value.trim()) || "trending";
+    this.db().createTrend({ id: "t" + Date.now(), tag, meta, delta: "new" }, this.state.xtrends)
+      .then(xtrends => this.setState({ xtrends }));
+    [this.xTag, this.xCount].forEach(r => { if (r.current) r.current.value = ""; });
+  };
+
+  days(d) { return d ? Math.ceil((new Date(d + "T00:00:00") - new Date().setHours(0, 0, 0, 0)) / DAY) : null; }
+  fmt(d) {
+    if (!d) return "—";
+    const dt = new Date(d + "T00:00:00");
+    return isNaN(dt) ? d : dt.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  }
+  rel(n) { return n === 0 ? "today" : n === 1 ? "tomorrow" : n < 0 ? Math.abs(n) + "d ago" : "in " + n + "d"; }
+  initials(name) { return name.split(/\s+/).map(s => s[0]).join("").slice(0, 2).toUpperCase(); }
+
+  renderVals() {
+    const { members, projects, feed, xtrends, wallets, wl, tab, me, modFilter, selected } = this.state;
+    const hypeWeight = this.props.hypeWeight ?? 60;
+    const meObj = members.find(m => m.id === me) || members[0];
+    const isAdmin = meObj && (meObj.role === "owner" || meObj.role === "admin");
+    const memberName = id => { const m = members.find(x => x.id === id); return m ? m.name : "—"; };
+    const walletName = id => { const w = wallets.find(x => x.id === id); return w ? w.label : "Not assigned"; };
+    const projectOf = id => projects.find(p => p.id === id);
+    const claimed = pid => wl.some(w => w.projectId === pid);
+    const tasksOf = w => w.tasks || Component.DEFAULT_TASKS.map((t, i) => ({ id: "t" + i, text: t, done: false }));
+
+    const TABS = [["home", "Overview"], ["priority", "Priority"], ["projects", "Projects"], ["mywl", "My WL"], ["wallets", "Wallets"], ["calendar", "Calendar"], ["stats", "Stats"]];
+    const gaLive = (this.state.giveaways || []).filter(g => g.status === "live").length;
+    TABS.splice(4, 0, ["giveaways", gaLive ? "Giveaways (" + gaLive + ")" : "Giveaways"]);
+    if (isAdmin) {
+      TABS.push(["moderation", feed.length ? "Moderation (" + feed.length + ")" : "Moderation"]);
+      TABS.push(["team", "Team"]);
+      TABS.push(["settings", "X / Settings"]);
+    }
+
+    const scored = projects.map(c => {
+      const dm = this.days(c.mint), dd = this.days(c.deadline);
+      const urgency = Math.max(0, 100 - (dm == null ? 60 : Math.max(dm, 0)) * 2.2);
+      const score = Math.round((c.hype * 10) * (hypeWeight / 100) + urgency * (1 - hypeWeight / 100));
+      return { c, score, dm, dd };
+    }).sort((a, b) => b.score - a.score);
+
+    const calendar = [];
+    projects.forEach(c => {
+      if (c.deadline) calendar.push({ d: c.deadline, kind: "Deadline", project: c.project, kindBg: "rgba(251,146,60,.12)", kindFg: "#fdba74", kindBd: "rgba(251,146,60,.3)" });
+      if (c.mint) calendar.push({ d: c.mint, kind: "Mint", project: c.project, kindBg: "rgba(168,85,247,.14)", kindFg: "#d8b4fe", kindBd: "rgba(168,85,247,.32)" });
+    });
+    calendar.sort((a, b) => a.d.localeCompare(b.d));
+
+    const todo = projects.filter(c => { const d = this.days(c.deadline); return d !== null && d >= 0 && d <= 3; })
+      .sort((a, b) => a.deadline.localeCompare(b.deadline))
+      .map(c => ({ project: c.project, dm: c.dm, due: this.rel(this.days(c.deadline)) }));
+
+    const wonCount = wl.filter(w => w.status === "won").length;
+    const appliedCount = wl.filter(w => w.status !== "lost").length;
+    const modShown = feed.slice().sort((a, b) => b.ts - a.ts)
+      .filter(p => modFilter === "all" || (modFilter === "pinned" ? p.pinned : p.type === modFilter));
+
+    return {
+      locked: this.state.locked,
+      unlocked: !this.state.locked,
+      lockNote: this.state.note,
+      refPass: this.refPass, unlock: this.unlock, passKey: this.passKey,
+      lock: () => this.setState({ locked: true, me: null, wallets: [], wl: [], tab: "home" }),
+
+      loginMembers: members.map(m => ({
+        name: m.name, handle: m.handle, role: m.role,
+        initials: this.initials(m.name), avatarBg: m.color,
+        roleBg: ROLES[m.role].bg, roleFg: ROLES[m.role].fg, roleBd: ROLES[m.role].bd,
+        bg: this.state.pick === m.id ? "rgba(168,85,247,.12)" : "#15151d",
+        border: this.state.pick === m.id ? "#a855f7" : "#262633",
+        pick: () => this.setState({ pick: m.id, note: "" })
+      })),
+
+      meName: meObj ? meObj.name : "", meRole: meObj ? meObj.role : "",
+      meInitials: meObj ? this.initials(meObj.name) : "", meAvatarBg: meObj ? meObj.color : "#8b5cf6",
+      greeting: "Welcome back, " + (meObj ? meObj.name : "") + ".",
+      homeSub: todo.length ? todo.length + " deadline" + (todo.length > 1 ? "s" : "") + " inside 3 days · " + projects.length + " projects on the board" : projects.length + " projects on the board · nothing urgent today",
+
+      tabs: TABS.map(([id, label]) => ({
+        label, pick: () => this.setState({ tab: id }),
+        bg: tab === id ? "rgba(168,85,247,.16)" : "transparent",
+        fg: tab === id ? "#f4f4fa" : "#a9a9bd",
+        border: tab === id ? "#a855f7" : "#262633"
+      })),
+      isHome: tab === "home", isPriority: tab === "priority", isProjects: tab === "projects",
+      isMyWl: tab === "mywl", isWallets: tab === "wallets", isCalendar: tab === "calendar",
+      isStats: tab === "stats", isGiveaways: tab === "giveaways",
+
+      /* ---------- paste parser ---------- */
+      pasting: this.state.pasting,
+      pasteLabel: this.state.pasting ? "Close paste" : "📋 Paste from X",
+      pasteBg: this.state.pasting ? "rgba(168,85,247,.16)" : "transparent",
+      pasteFg: this.state.pasting ? "#e9d5ff" : "#d5d5e2",
+      pasteBorder: this.state.pasting ? "#a855f7" : "#262633",
+      togglePaste: () => this.setState({ pasting: !this.state.pasting, adding: false }),
+      pasteText: this.state.pasteText,
+      setPasteText: e => this.setState({ pasteText: e.target.value }),
+      parseNote: this.state.parseNote,
+      clearPaste: () => this.setState({ pasteText: "", parsed: null, parseNote: "" }),
+      runParse: () => {
+        const p = window.CollabParse && window.CollabParse.parse(this.state.pasteText);
+        if (!p) { this.setState({ parseNote: "Paste something first." }); return; }
+        this.setState({
+          parsed: p,
+          parseNote: p.confidence >= 66 ? "Read it — check the fields." :
+                     p.confidence >= 34 ? "Partial read. Fill the gaps yourself." :
+                     "Not much to go on. Fill it in by hand."
+        });
+      },
+      parsed: (() => {
+        const p = this.state.parsed;
+        if (!p) return null;
+        const set = k => e => this.setState({ parsed: { ...this.state.parsed, [k]: e.target.value } });
+        const F = (k, label, placeholder) => ({
+          label, value: p[k] || "", placeholder: placeholder || "—", set: set(k),
+          border: p[k] ? "#2d4a35" : "#262633",
+          color: p[k] ? "#e8e8f2" : "#8f8fa3"
+        });
+        return {
+          confLabel: p.confidence + "% filled",
+          confBg: p.confidence >= 66 ? "rgba(74,222,128,.12)" : p.confidence >= 34 ? "rgba(251,146,60,.12)" : "rgba(248,113,113,.12)",
+          confFg: p.confidence >= 66 ? "#86efac" : p.confidence >= 34 ? "#fdba74" : "#fca5a5",
+          confBd: p.confidence >= 66 ? "rgba(74,222,128,.3)" : p.confidence >= 34 ? "rgba(251,146,60,.3)" : "rgba(248,113,113,.3)",
+          fields: [
+            F("project", "Project", "name"), F("chain", "Chain", "ETH"),
+            F("supply", "Supply", "TBA"), F("price", "Mint price", "TBA"),
+            F("mint", "Mint date", "YYYY-MM-DD"), F("deadline", "WL deadline", "YYYY-MM-DD"),
+            F("spots", "Spots", "—"), F("manager", "Collab manager", "@handle")
+          ],
+          hasReqs: (p.requirements || []).length > 0,
+          reqs: (p.requirements || []).map(r => ({
+            label: r.label, icon: (this.REQ_META[r.type] || {}).icon || "•"
+          }))
+        };
+      })(),
+      saveParsed: () => {
+        const p = this.state.parsed;
+        if (!p || !p.project) { this.setState({ parseNote: "Needs a project name." }); return; }
+        this.addProjectRow({
+          id: "c" + Date.now(), project: p.project, chain: (p.chain || "—").toUpperCase(),
+          manager: p.manager || "—", dm: p.dm || "", spots: p.spots || "—",
+          deadline: p.deadline || "", mint: p.mint || "", price: p.price || "TBA",
+          supply: p.supply || "TBA", hype: 6, rules: p.rules || "", notes: p.notes || "",
+          x: p.x || "", tg: p.tg || "", giveaway: !!p.giveaway, addedBy: me, ts: Date.now()
+        });
+        this.setState({ pasteText: "", parsed: null, parseNote: "Added to the board." });
+        setTimeout(() => this.setState({ parseNote: "" }), 4000);
+      },
+      saveParsedAsGiveawayUnused: () => {},
+      saveParsedAsGiveaway: () => {
+        const p = this.state.parsed;
+        if (!p || !p.project) { this.setState({ parseNote: "Needs a project name." }); return; }
+        this.addProjectRow({
+          id: "c" + Date.now(), project: p.project, chain: (p.chain || "—").toUpperCase(),
+          manager: p.manager || "—", dm: p.dm || "", spots: p.spots || "—",
+          deadline: p.deadline || "", mint: p.mint || "", price: p.price || "TBA",
+          supply: p.supply || "TBA", hype: 6, rules: p.rules || "", notes: p.notes || "",
+          x: p.x || "", tg: p.tg || "", giveaway: true, addedBy: me, ts: Date.now()
+        });
+        this.db().createGiveaway({
+          title: (p.spots ? p.spots + " WL spots for " : "WL spots for ") + p.project,
+          project_name: p.project, chain: (p.chain || "").toUpperCase(),
+          prize: (p.spots || "?") + " WL spots", winners: parseInt(p.spots, 10) || 1,
+          ends_at: p.deadline ? new Date(p.deadline + "T23:59").toISOString() : null,
+          status: "live", requirements: p.requirements || [],
+          x_post_url: p.x || null, discord_url: p.discord || null, telegram_url: p.tg || null,
+          notes: p.notes || null
+        }).then(r => {
+          this.setState({ tab: "giveaways", pasteText: "", parsed: null, parseNote: "" });
+          if (!r.ok) { this.setState({ tablesMissing: !!r.missing }); this.gaSay(r.msg, false, r.missing); return; }
+          this.setState({ giveaways: r.list, tablesMissing: false });
+          this.gaSay("Project added and the giveaway is live.", true);
+        });
+      },
+
+      /* ---------- giveaways ---------- */
+      newGa: this.state.newGa,
+      newGaLabel: this.state.newGa ? "Cancel" : "+ New giveaway",
+      toggleNewGa: () => this.setState({ newGa: !this.state.newGa, gaNote: "" }),
+      gaNote: this.state.gaNote,
+      gaNoteBg: this.state.gaNoteOk ? "rgba(74,222,128,.1)" : "rgba(251,146,60,.1)",
+      gaNoteBd: this.state.gaNoteOk ? "rgba(74,222,128,.3)" : "rgba(251,146,60,.32)",
+      gaNoteFg: this.state.gaNoteOk ? "#86efac" : "#fdba74",
+      tablesMissing: this.state.tablesMissing,
+      recheckTables: () => {
+        this.db().listGiveaways().then(giveaways => {
+          const missing = !!this.db().missingTables;
+          this.setState({ giveaways, tablesMissing: missing });
+          this.gaSay(missing ? "Still not there — make sure the SQL ran without errors." : "Tables found. You're good to go.", !missing);
+        });
+      },
+      gImageVal: this.state.gImage,
+      setGImage: e => this.setState({ gImage: e.target.value }),
+      gTitle: this.gTitle, gProject: this.gProject, gPrize: this.gPrize,
+      gWinners: this.gWinners, gEnds: this.gEnds, gPost: this.gPost,
+      projectOpts: projects.map(p => ({ id: p.id, label: p.project })),
+      reqTypes: Object.keys(this.REQ_META).map(k => {
+        const m = this.REQ_META[k], on = !!this.state.reqOn[k];
+        return {
+          label: m.label, icon: m.icon, on,
+          needsTarget: !!m.needsTarget && on,
+          hint: m.hint || "", target: this.state.reqTarget[k] || "",
+          bg: on ? "rgba(168,85,247,.08)" : "#15151d",
+          border: on ? "rgba(168,85,247,.3)" : "#21212c",
+          fg: on ? "#e8e8f2" : "#8f8fa3",
+          toggle: () => this.setState({ reqOn: { ...this.state.reqOn, [k]: !on } }),
+          setTarget: e => this.setState({ reqTarget: { ...this.state.reqTarget, [k]: e.target.value } })
+        };
+      }),
+      createGa: () => {
+        const v = r => (this[r].current ? this[r].current.value.trim() : "");
+        const title = v("gTitle");
+        if (!title) { this.gaSay("Needs a title.", false); return; }
+        const pid = v("gProject");
+        const proj = projects.find(p => p.id === pid);
+        this.gaSay("Saving…", true);
+        this.db().createGiveaway({
+          project_id: this.state.cloud && pid ? pid : null,
+          title, project_name: proj ? proj.project : null,
+          chain: proj ? proj.chain : null,
+          prize: v("gPrize") || null,
+          image_url: this.state.gImage.trim() || null,
+          winners: parseInt(v("gWinners"), 10) || 1,
+          ends_at: v("gEnds") ? new Date(v("gEnds")).toISOString() : null,
+          status: "live", requirements: this.buildReqs(),
+          x_post_url: v("gPost") || null,
+          discord_url: null, telegram_url: null, notes: null
+        }).then(r => {
+          if (!r.ok) {
+            this.setState({ tablesMissing: !!r.missing });
+            this.gaSay(r.msg, false, r.missing);
+            return;
+          }
+          ["gTitle", "gPrize", "gWinners", "gEnds", "gPost"].forEach(k => { if (this[k].current) this[k].current.value = ""; });
+          this.setState({ giveaways: r.list, newGa: false, gImage: "", tablesMissing: false });
+          this.gaSay(r.msg, true);
+        });
+      },
+      noGiveaways: (this.state.giveaways || []).length === 0,
+      giveaways: (this.state.giveaways || []).map(g => {
+        const es = this.state.entries[g.id] || [];
+        const verified = es.filter(e => e.verified).length;
+        const won = es.filter(e => e.won);
+        const ends = g.ends_at ? new Date(g.ends_at) : null;
+        const over = ends && ends < new Date();
+        const st = g.status === "drawn" ? { l: "Drawn", bg: "rgba(168,85,247,.14)", fg: "#d8b4fe", bd: "rgba(168,85,247,.32)" }
+                 : over ? { l: "Ended", bg: "#15151d", fg: "#a9a9bd", bd: "#262633" }
+                 : { l: "Live", bg: "rgba(74,222,128,.12)", fg: "#86efac", bd: "rgba(74,222,128,.3)" };
+        const relTime = !ends ? "no end date"
+          : over ? "ended " + this.rel(Math.ceil((ends - Date.now()) / DAY))
+          : "ends " + this.rel(Math.ceil((ends - Date.now()) / DAY));
+        return {
+          title: g.title, projectName: g.project_name || "", image: g.image_url || "",
+          statusLabel: st.l, statusBg: st.bg, statusFg: st.fg, statusBd: st.bd,
+          cardBorder: g.status === "drawn" ? "rgba(168,85,247,.28)" : over ? "#1e1e29" : "rgba(74,222,128,.22)",
+          timing: relTime,
+          stats: [
+            { value: es.length, label: "Entries", color: "#f4f4fa" },
+            { value: verified, label: "Verified", color: "#86efac" },
+            { value: g.winners || 1, label: "Winners", color: "#d8b4fe" },
+            { value: g.prize || "—", label: "Prize", color: "#7dd3fc" }
+          ],
+          hasReqs: (g.requirements || []).length > 0,
+          reqs: (g.requirements || []).map(r => ({ label: r.label, icon: (this.REQ_META[r.type] || {}).icon || "•" })),
+          entriesLabel: (this.state.openGa === g.id ? "Hide" : "Show") + " entries (" + es.length + ")",
+          openEntries: () => this.setState({ openGa: this.state.openGa === g.id ? "" : g.id }),
+          showEntries: this.state.openGa === g.id,
+          noEntries: es.length === 0,
+          note: this.state.gaNotes[g.id] || (won.length ? won.length + " winner" + (won.length > 1 ? "s" : "") + ": " + won.map(w => w.handle).join(", ") : ""),
+          noteColor: this.state.gaNotes[g.id] ? "#86efac" : "#8f8fa3",
+          entries: es.map(e => {
+            const total = (g.requirements || []).length;
+            const done = Object.keys(e.checks || {}).filter(k => (e.checks || {})[k]).length;
+            return {
+              handle: e.handle, wallet: e.wallet || "no wallet", won: !!e.won,
+              checkLabel: total ? done + "/" + total + " claimed" : "—",
+              rowBg: e.won ? "rgba(168,85,247,.08)" : "#15151d",
+              rowBorder: e.won ? "rgba(168,85,247,.3)" : e.verified ? "rgba(74,222,128,.22)" : "#21212c",
+              vLabel: e.verified ? "Verified" : "Verify",
+              vBg: e.verified ? "rgba(74,222,128,.12)" : "transparent",
+              vFg: e.verified ? "#86efac" : "#a9a9bd",
+              vBd: e.verified ? "rgba(74,222,128,.3)" : "#262633",
+              toggleVerify: () => this.db().updateEntry(e.id, { verified: !e.verified }).then(r => {
+                if (r && r.ok === false) { this.gaSay(r.msg, false, r.missing); return; }
+                this.refreshEntries(g.id);
+              }),
+              remove: () => this.db().deleteEntry(e.id).then(r => {
+                if (r && r.ok === false) { this.gaSay(r.msg, false, r.missing); return; }
+                this.refreshEntries(g.id);
+              })
+            };
+          }),
+          verifyAll: () => {
+            Promise.all(es.filter(e => !e.verified).map(e => this.db().updateEntry(e.id, { verified: true })))
+              .then(rs => {
+                const bad = (rs || []).filter(r => r && r.ok === false)[0];
+                if (bad) { this.gaSay(bad.msg, false, bad.missing); return; }
+                return this.db().listEntries(g.id).then(v => {
+                  this.setState(s => ({ entries: { ...s.entries, [g.id]: v }, gaNotes: { ...s.gaNotes, [g.id]: "All " + v.length + " marked verified." } }));
+                  setTimeout(() => this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: "" } })), 5000);
+                });
+              });
+          },
+          draw: () => {
+            if (!verified) {
+              this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: "No verified entries to draw from." } }));
+              setTimeout(() => this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: "" } })), 5000);
+              return;
+            }
+            this.db().drawWinners(g.id, g.winners || 1).then(r => {
+              if (!r.ok) {
+                this.setState({ tablesMissing: !!r.missing });
+                this.gaSay(r.msg || "Draw failed.", false, r.missing);
+                return;
+              }
+              this.db().listGiveaways().then(giveaways => this.setState({ giveaways }));
+              this.db().listEntries(g.id).then(v => this.setState(s => ({
+                entries: { ...s.entries, [g.id]: v },
+                openGa: g.id,
+                gaNotes: { ...s.gaNotes, [g.id]: "Drawn." }
+              })));
+            });
+          },
+          announce: () => {
+            const url = (this.state.hookUrl || "").trim();
+            const msg = won.length
+              ? "🎉 **" + g.title + "** — winners: " + won.map(w => w.handle).join(", ")
+              : "🎁 **" + g.title + "** is live" + (g.prize ? " — " + g.prize : "") + ". " + es.length + " entries so far.";
+            if (!url) {
+              this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: "Add a Discord webhook in Settings first." }, tab: "settings" }));
+              return;
+            }
+            fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: msg }) })
+              .then(r => this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: r.ok ? "Posted to Discord." : "Discord rejected it." } })))
+              .catch(() => this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: "Blocked by the browser — works once deployed." } })));
+            setTimeout(() => this.setState(s => ({ gaNotes: { ...s.gaNotes, [g.id]: "" } })), 6000);
+          },
+          remove: () => this.db().deleteGiveaway(g.id).then(r => {
+            if (!r.ok) { this.gaSay(r.msg, false, r.missing); return; }
+            this.setState({ giveaways: r.list });
+          })
+        };
+      }),
+      isModeration: tab === "moderation" && isAdmin, isTeam: tab === "team" && isAdmin,
+      isSettings: tab === "settings" && isAdmin,
+
+      stats: [
+        { value: projects.length, label: "On the board", color: "#f4f4fa" },
+        { value: appliedCount, label: "My live spots", color: "#7dd3fc" },
+        { value: wonCount, label: "My WL won", color: "#86efac" },
+        { value: todo.length, label: "Closing ≤3d", color: "#fdba74" },
+        { value: members.length, label: "Team members", color: "#d8b4fe" }
+      ],
+      todo, noTodo: todo.length === 0,
+
+      hasAlerts: !this.state.alertsOff && todo.length > 0,
+      alertText: todo.length === 1
+        ? todo[0].project + " closes " + todo[0].due + " — get the requirements done."
+        : todo.length + " collabs close within 3 days: " + todo.slice(0, 3).map(t => t.project).join(", ") + (todo.length > 3 ? "…" : ""),
+      dismissAlerts: () => this.setState({ alertsOff: true }),
+      goPriority: () => this.setState({ tab: "priority", alertsOff: true }),
+
+      myStats: [
+        { value: wl.length, label: "Spots claimed", color: "#f4f4fa" },
+        { value: wonCount, label: "Won", color: "#86efac" },
+        { value: wl.filter(w => w.status === "lost").length, label: "Lost", color: "#565669" },
+        { value: (() => {
+            const all = wl.reduce((n, w) => n + tasksOf(w).length, 0);
+            const d = wl.reduce((n, w) => n + tasksOf(w).filter(t => t.done).length, 0);
+            return all ? Math.round(d / all * 100) + "%" : "—";
+          })(), label: "Grind done", color: "#d8b4fe" }
+      ],
+      winRate: (() => {
+        const decided = wl.filter(w => w.status !== "applied").length;
+        return decided ? Math.round(wonCount / decided * 100) + "%" : "—";
+      })(),
+      decidedLabel: (() => {
+        const decided = wl.filter(w => w.status !== "applied").length;
+        return decided ? wonCount + " of " + decided + " decided" : "none decided yet";
+      })(),
+      outcomes: (() => {
+        const c = s => wl.filter(w => w.status === s).length;
+        return [
+          { label: "Won", count: c("won"), color: "#4ade80" },
+          { label: "Applied", count: c("applied"), color: "#8b5cf6" },
+          { label: "Lost", count: c("lost"), color: "#3a3a4d" }
+        ];
+      })(),
+      donut: (() => {
+        const c = s => wl.filter(w => w.status === s).length;
+        const parts = [["#4ade80", c("won")], ["#8b5cf6", c("applied")], ["#3a3a4d", c("lost")]];
+        const total = parts.reduce((n, p) => n + p[1], 0);
+        if (!total) return "#1e1e29";
+        let at = 0;
+        const stops = parts.filter(p => p[1]).map(p => {
+          const from = at / total * 360;
+          at += p[1];
+          return p[0] + " " + from.toFixed(1) + "deg " + (at / total * 360).toFixed(1) + "deg";
+        });
+        return "conic-gradient(" + stops.join(",") + ")";
+      })(),
+      monthBars: (() => {
+        const out = [];
+        for (let i = 0; i < 6; i++) {
+          const d = new Date();
+          d.setDate(1);
+          d.setMonth(d.getMonth() + i);
+          const key = d.toISOString().slice(0, 7);
+          out.push({
+            key, month: d.toLocaleDateString(undefined, { month: "short" }).toUpperCase(),
+            count: projects.filter(p => (p.mint || "").slice(0, 7) === key).length
+          });
+        }
+        const max = Math.max(1, ...out.map(o => o.count));
+        return out.map((o, i) => ({
+          month: o.month, count: o.count,
+          height: Math.max(4, Math.round(o.count / max * 100)) + "%",
+          color: o.count === max && o.count > 0 ? "linear-gradient(180deg,#d946ef,#8b5cf6)" : o.count ? "#8b5cf6" : "#1e1e29",
+          labelColor: o.count ? "#d5d5e2" : "#565669"
+        }));
+      })(),
+      chainBars: (() => {
+        const by = {};
+        wl.forEach(w => {
+          const p = projectOf(w.projectId);
+          const c = (p && p.chain) || "—";
+          by[c] = (by[c] || 0) + 1;
+        });
+        const keys = Object.keys(by);
+        const max = Math.max(1, ...keys.map(k => by[k]));
+        const colors = ["#8b5cf6", "#d946ef", "#38bdf8", "#4ade80", "#fb923c"];
+        return keys.sort((a, b) => by[b] - by[a]).map((k, i) => ({
+          chain: k, count: by[k],
+          width: Math.round(by[k] / max * 100) + "%",
+          color: colors[i % colors.length]
+        }));
+      })(),
+      noChains: wl.length === 0,
+      grindBars: wl.map(w => {
+        const p = projectOf(w.projectId) || {};
+        const ts = tasksOf(w);
+        const d = ts.filter(t => t.done).length;
+        const pct = ts.length ? Math.round(d / ts.length * 100) : 0;
+        return {
+          project: p.project || "Unknown", label: d + "/" + ts.length,
+          width: pct + "%",
+          color: pct === 100 ? "#86efac" : "#8f8fa3",
+          bar: pct === 100 ? "#4ade80" : "linear-gradient(90deg,#8b5cf6,#d946ef)"
+        };
+      }),
+      noGrind: wl.length === 0,
+
+      dbConnected: !!this.state.cloud,
+      dbStatus: this.state.cloud ? "Live" : "Local only",
+      dbBg: this.state.cloud ? "rgba(74,222,128,.12)" : "rgba(251,146,60,.12)",
+      dbFg: this.state.cloud ? "#86efac" : "#fdba74",
+      dbBd: this.state.cloud ? "rgba(74,222,128,.3)" : "rgba(251,146,60,.3)",
+      dbCardBorder: this.state.cloud ? "rgba(74,222,128,.25)" : "#1e1e29",
+      dbBlurb: this.state.cloud
+        ? "Connected. Posts, projects and trends are shared — every visitor sees the same board, and changes appear without a refresh."
+        : "Right now everything saves in this browser only, so each visitor sees their own copy. Run supabase/schema.sql in your Supabase project, then paste the two values below.",
+      dbUrl: this.state.dbUrl,
+      dbKey: this.state.dbKey,
+      setDbUrl: e => this.setState({ dbUrl: e.target.value }),
+      setDbKey: e => this.setState({ dbKey: e.target.value }),
+      dbNote: this.state.dbNote,
+      dbNoteColor: this.state.dbNoteOk ? "#86efac" : "#f87171",
+      connectDb: () => {
+        const ok = this.db().saveConfig(this.state.dbUrl, this.state.dbKey);
+        if (!ok) { this.setState({ dbNote: "Need both a URL and an anon key.", dbNoteOk: false }); return; }
+        this.setState({ dbNote: "Testing…", dbNoteOk: true });
+        this.db().test().then(r => {
+          this.setState({ dbNote: r.msg, dbNoteOk: r.ok, cloud: r.ok });
+          if (r.ok) { this.load(); if (this.unwatch) this.unwatch(); this.unwatch = this.db().watch(["posts", "projects", "trends"], () => this.load()); }
+        });
+      },
+      seedDb: () => {
+        this.setState({ dbNote: "Pushing…", dbNoteOk: true });
+        this.db().seed(SEED_PROJECTS, SEED_X).then(r => {
+          this.setState({ dbNote: r.msg, dbNoteOk: r.ok });
+          if (r.ok) this.load();
+        });
+      },
+      disconnectDb: () => {
+        this.db().clearConfig();
+        if (this.unwatch) { this.unwatch(); this.unwatch = null; }
+        this.setState({ cloud: false, dbNote: "Back to browser-only storage.", dbNoteOk: true });
+      },
+
+      hookUrl: this.state.hookUrl,
+      setHookUrl: e => this.setState({ hookUrl: e.target.value }),
+      hookNote: this.state.hookNote,
+      hookStatus: this.state.hookUrl ? "URL set" : "Not connected",
+      hookStatusBg: this.state.hookUrl ? "rgba(74,222,128,.12)" : "rgba(251,146,60,.12)",
+      hookStatusFg: this.state.hookUrl ? "#86efac" : "#fdba74",
+      hookStatusBd: this.state.hookUrl ? "rgba(74,222,128,.3)" : "rgba(251,146,60,.3)",
+      hookEvents: [
+        ["drop", "A new collab is added to the board"],
+        ["deadline", "A submission deadline is 24h away"],
+        ["won", "Someone on the team marks a spot as Won"]
+      ].map(([k, label]) => ({
+        label, on: this.state.hookEvents[k],
+        toggle: () => this.setState({ hookEvents: { ...this.state.hookEvents, [k]: !this.state.hookEvents[k] } })
+      })),
+      testHook: () => {
+        const url = this.state.hookUrl.trim();
+        if (!url) { this.setState({ hookNote: "Paste a webhook URL first." }); return; }
+        this.setState({ hookNote: "Sending…" });
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: "**sp\u2227ce** test — alerts are wired up. " + projects.length + " projects on the board." })
+        }).then(r => this.setState({ hookNote: r.ok ? "Sent — check the channel." : "Discord rejected it (" + r.status + "). Check the URL." }))
+          .catch(() => this.setState({ hookNote: "Blocked by the browser. Webhooks need to fire from the server — this works once deployed." }));
+        setTimeout(() => this.setState({ hookNote: "" }), 9000);
+      },
+
+      xTrends: xtrends.map((t, i) => ({
+        rank: i + 1, tag: t.tag, meta: t.meta, delta: t.delta,
+        deltaColor: String(t.delta).indexOf("−") === 0 ? "#f87171" : "#86efac",
+        remove: () => this.db().deleteTrend(t.id, xtrends).then(v => this.setState({ xtrends: v }))
+      })),
+      noTrends: (xtrends || []).length === 0,
+      noProjects: projects.length === 0,
+      noCalendar: calendar.length === 0,
+      canSeed: !!this.state.cloud,
+      emptyProjectsHint: this.state.cloud
+        ? "Your Supabase database is connected but has no projects in it yet. Add one by hand, or push the starter set from Settings to see the board working."
+        : "Add the first project and the whole hub — priority, calendar, the public listings — fills in from it.",
+      goProjects: () => this.setState({ tab: "projects" }),
+      goSettings: () => this.setState({ tab: "settings" }),
+      xStatus: "Manual", xStatusBg: "rgba(168,85,247,.12)", xStatusFg: "#d8b4fe", xStatusBd: "rgba(168,85,247,.3)",
+      xEndpoint: this.xEndpoint, xAccounts: this.xAccounts, xTag: this.xTag, xCount: this.xCount,
+      addTrend: this.addTrend,
+      xConnect: () => this.setState({ tab: "settings" }),
+
+      priority: scored.map((s, i) => ({
+        rank: i + 1, project: s.c.project, score: s.score, hype: s.c.hype,
+        mine: claimed(s.c.id),
+        sub: (s.c.chain || "") + " · " + (s.dm == null ? "mint TBA" : "mint " + this.rel(s.dm)) + " · " + s.c.spots + " spots",
+        barWidth: Math.min(100, s.score) + "%",
+        barColor: s.score >= 70 ? "linear-gradient(90deg,#8b5cf6,#d946ef)" : s.score >= 45 ? "#8b5cf6" : "#3a3a4d",
+        urgency: s.dd == null ? "No deadline" : s.dd < 0 ? "Closed" : s.dd <= 2 ? "Act today" : "in " + s.dd + "d",
+        urgencyBg: s.dd !== null && s.dd >= 0 && s.dd <= 2 ? "rgba(251,146,60,.12)" : "#15151d",
+        urgencyFg: s.dd !== null && s.dd >= 0 && s.dd <= 2 ? "#fdba74" : "#a9a9bd",
+        urgencyBd: s.dd !== null && s.dd >= 0 && s.dd <= 2 ? "rgba(251,146,60,.3)" : "#262633"
+      })),
+
+      adding: this.state.adding,
+      addLabel: this.state.adding ? "Cancel" : "+ New project",
+      toggleAdd: () => this.setState({ adding: !this.state.adding }),
+      addProject: this.addProject,
+      nProject: this.nProject, nChain: this.nChain, nManager: this.nManager, nDm: this.nDm,
+      nSpots: this.nSpots, nDeadline: this.nDeadline, nMint: this.nMint, nPrice: this.nPrice,
+      nSupply: this.nSupply, nHype: this.nHype, nGiveaway: this.nGiveaway,
+      nRules: this.nRules, nNotes: this.nNotes, nX: this.nX, nTg: this.nTg,
+
+      projects: projects.map(c => {
+        const dd = this.days(c.deadline);
+        const mine = claimed(c.id);
+        return {
+          ...c,
+          addedBy: c.addedBy ? memberName(c.addedBy) : "import",
+          canDelete: isAdmin || c.addedBy === me,
+          claimCount: mine ? "You" : "—",
+          deadlineLabel: c.deadline ? this.fmt(c.deadline) + " · " + this.rel(dd) : "—",
+          deadlineColor: dd !== null && dd < 0 ? "#565669" : dd !== null && dd <= 2 ? "#fdba74" : "#e8e8f2",
+          mintLabel: this.fmt(c.mint),
+          claimLabel: mine ? "✓ Claimed" : "Claim spot",
+          claimBg: mine ? "rgba(74,222,128,.12)" : "linear-gradient(135deg,#8b5cf6,#d946ef)",
+          claimFg: mine ? "#86efac" : "#fff",
+          claimBorder: mine ? "1px solid rgba(74,222,128,.3)" : "0",
+          claim: () => {
+            if (mine) { this.saveWl(wl.filter(w => w.projectId !== c.id)); return; }
+            this.saveWl([...wl, {
+              id: "x" + Date.now(), projectId: c.id, status: "applied", wallet: "", source: "",
+              tasks: Component.DEFAULT_TASKS.map((t, i) => ({ id: "t" + i, text: t, done: false }))
+            }]);
+          },
+          remove: () => this.delProjectRow(c.id)
+        };
+      }),
+
+      exportCsv: () => {
+        const rows = [["Project", "Chain", "Status", "Mint date", "Mint price", "Supply", "Wallet", "Source", "Checklist"]];
+        wl.forEach(w => {
+          const p = projectOf(w.projectId) || {};
+          rows.push([
+            p.project || "Unknown", p.chain || "", (STATUSES[w.status] || STATUSES.applied).label,
+            p.mint || "", p.price || "", p.supply || "",
+            walletName(w.wallet), w.source || "",
+            tasksOf(w).filter(t => t.done).length + "/" + tasksOf(w).length
+          ]);
+        });
+        const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(",")).join("\n");
+        const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "wl-spots-" + (meObj ? meObj.name.toLowerCase() : "me") + ".csv";
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      },
+
+      myWl: wl.map(w => {
+        const found = projectOf(w.projectId);
+        const p = found || { project: "Removed from the board", mint: "", price: "—" };
+        const st = STATUSES[w.status] || STATUSES.applied;
+        const upd = patch => this.saveWl(wl.map(x => x.id === w.id ? { ...x, ...patch } : x));
+        const tasks = tasksOf(w);
+        const done = tasks.filter(t => t.done).length;
+        const draft = this.state.drafts[w.id] || "";
+        const addTask = () => {
+          const text = draft.trim();
+          if (!text) return;
+          upd({ tasks: [...tasks, { id: "t" + Date.now(), text, done: false }] });
+          this.setState({ drafts: { ...this.state.drafts, [w.id]: "" } });
+        };
+        return {
+          tasks: tasks.map(t => ({
+            text: t.text, done: t.done,
+            color: t.done ? "#565669" : "#d5d5e2",
+            strike: t.done ? "line-through" : "none",
+            toggle: () => upd({ tasks: tasks.map(x => x.id === t.id ? { ...x, done: !x.done } : x) }),
+            remove: () => upd({ tasks: tasks.filter(x => x.id !== t.id) })
+          })),
+          taskLabel: tasks.length ? done + "/" + tasks.length + " done" : "no steps yet",
+          taskWidth: tasks.length ? Math.round(done / tasks.length * 100) + "%" : "0%",
+          taskColor: tasks.length && done === tasks.length ? "#86efac" : "#8f8fa3",
+          draft, addTask,
+          setDraft: e => this.setState({ drafts: { ...this.state.drafts, [w.id]: e.target.value } }),
+          draftKey: e => { if (e.key === "Enter") addTask(); },
+          project: p.project, mint: this.fmt(p.mint), price: p.price,
+          status: w.status, wallet: w.wallet, source: w.source,
+          statusLabel: st.label, statusBg: st.bg, statusFg: st.fg, statusBd: st.bd,
+          orphan: !found,
+          cardBorder: !found ? "rgba(248,113,113,.28)" : w.status === "won" ? "rgba(74,222,128,.3)" : "#1e1e29",
+          setStatus: e => upd({ status: e.target.value }),
+          setWallet: e => upd({ wallet: e.target.value }),
+          setSource: e => upd({ source: e.target.value }),
+          remove: () => this.saveWl(wl.filter(x => x.id !== w.id))
+        };
+      }),
+      noWl: wl.length === 0,
+      walletOpts: wallets.map(w => ({ id: w.id, label: w.label })),
+
+      walletCount: wallets.length + (wallets.length === 1 ? " wallet" : " wallets"),
+      wLabel: this.wLabel, wAddr: this.wAddr, wChains: this.wChains, addWallet: this.addWallet,
+      wallets: wallets.map(w => {
+        const used = wl.filter(x => x.wallet === w.id).map(x => (projectOf(x.projectId) || {}).project).filter(Boolean);
+        return {
+          label: w.label, chains: w.chains, isMain: w.main, canMakeMain: !w.main,
+          short: w.address.length > 24 ? w.address.slice(0, 12) + "…" + w.address.slice(-8) : w.address,
+          copyLabel: this.state.copied === w.id ? "Copied" : "Copy",
+          cardBorder: w.main ? "rgba(168,85,247,.4)" : "#1e1e29",
+          usage: used.length ? "Minting: " + used.join(", ") : "No mints assigned yet",
+          copy: () => {
+            if (navigator.clipboard) navigator.clipboard.writeText(w.address);
+            this.setState({ copied: w.id });
+            setTimeout(() => this.setState({ copied: "" }), 1600);
+          },
+          makeMain: () => this.saveWallets(wallets.map(x => ({ ...x, main: x.id === w.id }))),
+          remove: () => this.saveWallets(wallets.filter(x => x.id !== w.id))
+        };
+      }),
+
+      calendar: calendar.map(e => {
+        const dt = new Date(e.d + "T00:00:00");
+        return { ...e, day: dt.getDate(), month: dt.toLocaleDateString(undefined, { month: "short" }).toUpperCase(), rel: this.rel(this.days(e.d)) };
+      }),
+
+      modFilters: [["all", "All"], ["pinned", "Pinned"], ["collab", "Collabs"], ["mint", "Free mints"], ["shill", "Shills"], ["help", "Questions"]].map(([id, label]) => ({
+        label, pick: () => this.setState({ modFilter: id }),
+        bg: modFilter === id ? "rgba(168,85,247,.16)" : "transparent",
+        fg: modFilter === id ? "#f4f4fa" : "#a9a9bd",
+        border: modFilter === id ? "#a855f7" : "#262633"
+      })),
+      selectedCount: selected.length,
+      hasSelection: selected.length > 0,
+      deleteSelected: () => {
+        selected.forEach(id => this.delPostRow(id));
+        this.setState({ selected: [] });
+      },
+      inbox: modShown.map(p => {
+        const t = TYPES[p.type] || TYPES.alpha;
+        const sel = selected.indexOf(p.id) !== -1;
+        return {
+          title: p.title, body: p.body, pinned: !!p.pinned, selected: sel,
+          typeLabel: t.label, tagBg: t.bg, tagFg: t.fg, tagBd: t.bd,
+          cardBorder: sel ? "#a855f7" : p.pinned ? "rgba(168,85,247,.3)" : "#1e1e29",
+          meta: [p.project, p.manager && "CM " + p.manager, "by " + p.author, (p.votes || 0) + " votes"].filter(Boolean).join(" · "),
+          pinLabel: p.pinned ? "Unpin" : "Pin",
+          toggle: () => this.setState({ selected: sel ? selected.filter(x => x !== p.id) : [...selected, p.id] }),
+          pin: () => this.patchPostRow(p.id, { pinned: !p.pinned }),
+          promote: () => {
+            this.addProjectRow({
+              id: "c" + Date.now(), project: p.project || p.title, chain: (p.chain || "—").toUpperCase(),
+              manager: p.manager || "—", dm: p.link || "", spots: "—", deadline: p.deadline || "",
+              mint: "", price: "—", supply: "—", hype: 5, rules: "", notes: p.body || "",
+              giveaway: p.type === "mint", addedBy: me, ts: Date.now()
+            });
+            this.setState({ tab: "projects" });
+          },
+          remove: () => this.delPostRow(p.id)
+        };
+      }),
+      noInbox: modShown.length === 0,
+
+      mName: this.mName, mHandle: this.mHandle, mRole: this.mRole, mPass: this.mPass,
+      addMember: this.addMember,
+      team: members.map(m => ({
+        name: m.name, handle: m.handle, role: m.role,
+        initials: this.initials(m.name), avatarBg: m.color,
+        roleBg: ROLES[m.role].bg, roleFg: ROLES[m.role].fg, roleBd: ROLES[m.role].bd,
+        contribution: projects.filter(p => p.addedBy === m.id).length + " projects added",
+        canEdit: meObj && meObj.role === "owner" && m.role !== "owner",
+        canRemove: meObj && meObj.role === "owner" && m.id !== me && m.role !== "owner",
+        canSeePass: !!(meObj && meObj.role === "owner"),
+        passShown: this.state.shownPass === m.id ? m.pass : "••••-••••-••••",
+        passLabel: this.state.shownPass === m.id ? "Hide" : "Show",
+        togglePass: () => this.setState({ shownPass: this.state.shownPass === m.id ? "" : m.id }),
+        copyLabel: this.state.copiedPass === m.id ? "Copied" : "Copy",
+        copyPass: () => {
+          if (navigator.clipboard) navigator.clipboard.writeText(m.pass);
+          this.setState({ copiedPass: m.id });
+          setTimeout(() => this.setState({ copiedPass: "" }), 1600);
+        },
+        resetPass: () => {
+          const p = this.genPass();
+          this.saveMembers(members.map(x => x.id === m.id ? { ...x, pass: p } : x));
+          this.setState({ shownPass: m.id });
+        },
+        toggleLabel: m.role === "admin" ? "Make member" : "Make admin",
+        toggleRole: () => this.saveMembers(members.map(x => x.id === m.id ? { ...x, role: x.role === "admin" ? "member" : "admin" } : x)),
+        remove: () => this.saveMembers(members.filter(x => x.id !== m.id))
+      }))
+    };
+  }
+}
+
+</script>
+</body>
+</html>
